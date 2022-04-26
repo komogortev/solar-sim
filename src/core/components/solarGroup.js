@@ -1,6 +1,7 @@
 import {
   SphereBufferGeometry,
   Group,
+  Object3D,
   MathUtils,
   Mesh,
   MeshStandardMaterial,
@@ -140,18 +141,10 @@ function createSolarGroup() {
 function decoratePlanetoid(sphereMeshClone, data) {
   // Planetoid node attached to parent at position (0, 0, 0)
   const planetoidGroup = new Group();
-
-  const planetoidOrbit = new Group();
-  planetoidOrbit.name = data.nameId
-
-  // [AU] (150,000,000km = 93,000,000mi)
-  const astronomicalUnit = {
-    value: 150000000,
-    units: 'km',
-  }
-  // Distance from parent
-  planetoidOrbit.position.x = data.distance * astronomicalUnit * settings.value.scaling_factor
-
+  planetoidGroup.name = data.nameId
+  // Translate distance from the parent
+  planetoidGroup.position.x = data.distance.value * AppSettings.AU.value * settings.value.scaling_factor
+  planetoidGroup.rotation.z = data.tilt
 
   // 1. Adjust mesh material according to planetoid data
   sphereMeshClone.material = data.emissive
@@ -180,14 +173,14 @@ function decoratePlanetoid(sphereMeshClone, data) {
   const scaleFactor = (data.radius.value * settings.value.scaling_factor)
   sphereMeshClone.scale.multiplyScalar(scaleFactor)
 
-  const radiansPerSecond = convertRotationPerDayToRadians(data.rotation_period)
-  planetoidGroup.rotation.z = data.tilt
+  const radiansPerSecond = convertRotationPerDayToRadians(data.rotation_period.value)
 
   // each frame, animate planetoidGroup
   planetoidGroup.tick = (delta) => {
     // rotate planetoid in anticlockwise direction (+=)
     planetoidGroup.rotation.y += delta * radiansPerSecond * settings.value.timeSpeed;
   };
+
 
   planetoidGroup.add(sphereMeshClone)
 

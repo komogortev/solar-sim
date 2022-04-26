@@ -12,5 +12,9 @@ export const AppSettings = Object.freeze({
     aspect: window.innerWidth / window.innerHeight, // aspect ratio
     near: 0.1, // near clipping plane
     far: 1000 // far clipping plane
+  },
+  AU: {
+    value: 150000000, // [AU] (150,000,000km = 93,000,000mi)
+    units: 'km',
   }
 });
