@@ -92,7 +92,7 @@ function createHemisphereLight(upColour = 0xFFFF80, downColour = 0x808080) {
 
 export {
   createDirectionalLight,
-  PointLight,
+  createPointLight,
   createRectAreaLight,
   createSpotLight,
   createAmbientLight,

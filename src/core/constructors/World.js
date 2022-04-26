@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { loadBirds } from '../components/birds/birds';
 import { loadToonCat } from '../components/animals/toon-cat';
 import { createPerspectiveCamera } from '../components/camera';
-import { createAmbientLight, createHemisphereLight } from '../components/lights';
+import { createAmbientLight, createPointLight } from '../components/lights';
 import { createSolarGroup } from '../components/solarGroup.js';
 import { createScene } from '../components/scene';
 
@@ -15,7 +15,8 @@ import { Loop } from '../systems/Loop';
 
 let camera_, controls_, renderer_, scene_, loop_,
   textureLoader, gltfLoader, raycaster, mouse, clock,
-  clickFlag, contextClickFlag
+  clickFlag, contextClickFlag, clickCount,
+  solarGroup_
 
 class World {
   constructor(container) {
@@ -25,6 +26,7 @@ class World {
     raycaster = new THREE.Raycaster()
     mouse = new THREE.Vector2(1, 1)
     clock = new THREE.Clock();
+    clickCount = 0
 
     // World scene tools
     camera_ = createPerspectiveCamera();
@@ -37,7 +39,8 @@ class World {
     loop_.updatables.push(controls_);
 
     const ambLight_ = createAmbientLight(0xffffff, .5);
-    scene_.add(ambLight_);
+    const pointLight_ = createPointLight(0xffffff, 10);
+    scene_.add(ambLight_, pointLight_);
 
     // Setup reactive listeners
     const resizer = new Resizer(this.container, camera_, renderer_);
@@ -57,9 +60,9 @@ class World {
     // loop_.updatables.push(toonCat);
     // scene_.add(toonCat);
 
-    const solarGroup = createSolarGroup();
-    loop_.updatables.push(solarGroup.children[0]);
-    scene_.add(solarGroup);
+    solarGroup_ = createSolarGroup();
+    loop_.updatables.push(solarGroup_.children[0]);
+    scene_.add(solarGroup_);
   }
 
   onMouseClick(event) {
@@ -70,6 +73,13 @@ class World {
     clickFlag = true
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+
+    // jump camera to next planetoid
+    // clickCount = clickCount < solarGroup_.children.length ? clickCount + 1: 0
+    // const position = solarGroup_.children[clickCount].position
+    // camera_.position.x = position.x;
+    // camera_.lookAt(position);
+    // controls_.update();
   }
 
   onMouseDblClick(event) {

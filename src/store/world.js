@@ -6,7 +6,7 @@ const state = reactive({
     'Sun': {
       nameId: 'Sun',
       radius: {
-        value: 700000,
+        value: 700000 * 0.01, // multiply by additional scale down
         units: 'km'
       },
       distance: {
@@ -28,8 +28,6 @@ const state = reactive({
         units: 'day',
       }, // days
       tilt: 0,
-
-      mass: 332950, // Earth's mass
       emissive: 0xFFFF00,
       emissiveMap: 'models/solar-system/textures/sun/2k_sun.jpg',
       emissiveIntensity: 1,
@@ -362,7 +360,7 @@ const state = reactive({
             },
           }
         },
-        Uranus: {
+        'Uranus': {
           nameId: 'Uranus',
           radius: {
             value: 25362,
@@ -490,7 +488,7 @@ const state = reactive({
             },
           }
         },
-        Neptun: {
+        'Neptun': {
           nameId: 'Neptun',
           radius: {
             value: 24622,
@@ -541,7 +539,8 @@ const state = reactive({
   loading: true,
   settings: {
     timeSpeed: 1,
-    scaling_factor: 0.00001, // 6371km (637100m) >> 6.378m (0.006378km)
+    size_scaling_factor: 0.001, // 6371km (637100m) >> 6.378m (0.006378km)
+    distance_scaling_factor: 0.000001, // 6371km (637100m) >> 6.378m (0.006378km)
   },
 });
 

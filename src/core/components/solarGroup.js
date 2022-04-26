@@ -5,6 +5,7 @@ import {
   MathUtils,
   Mesh,
   MeshStandardMaterial,
+  MeshPhongMaterial,
   TextureLoader
 } from 'three';
 
@@ -27,11 +28,10 @@ function createSolarGroup() {
 
   const geometry = new SphereBufferGeometry(1, 16, 16);
 
-  const material = new MeshStandardMaterial({
-    color: 'indigo',
-  })
-
-  const protoSphereMesh = new Mesh(geometry, material);
+  // const material = new MeshStandardMaterial({
+  //   color: 'indigo',
+  // })
+  // const protoSphereMesh = new Mesh(geometry, material);
 
   // add the protoSphere to the group
   // group.add(protoSphereMesh);
@@ -58,10 +58,8 @@ function createSolarGroup() {
   // }
 
   Object.keys(solarSystemStore.value).forEach(key => {
-    const sphereMeshClone = protoSphereMesh.clone();
-    const star = decoratePlanetoid(sphereMeshClone, solarSystemStore.value[key])
-
-    group.add(star);
+    const starGroup = decoratePlanetoid(geometry.clone(), solarSystemStore.value[key])
+    group.add(starGroup);
 
     // const star = new Planetoid(getPlanetoidInfo(key))
     // const description = createMesh(
@@ -80,6 +78,12 @@ function createSolarGroup() {
 
     if (solarSystemStore.value[key].children) {
       Object.keys(solarSystemStore.value[key].children).forEach(childKey => {
+        const planetGroup = decoratePlanetoid(
+          geometry.clone(),
+          solarSystemStore.value[key].children[childKey]
+        )
+        starGroup.add(planetGroup);
+
     //     const planet = new Planetoid(getPlanetoidInfo(childKey))
     //     const description = createMesh(
     //       planet,
@@ -102,7 +106,13 @@ function createSolarGroup() {
     //     _makeAxisGrid(planet.orbit, `${childKey}`, 12, f2)
 
       if (solarSystemStore.value[key].children[childKey].children) {
-    //       Object.keys(solarSystemStore.value[key].children[childKey].children).forEach(childKey2 => {
+        Object.keys(solarSystemStore.value[key].children[childKey].children).forEach(childKey2 => {
+          const moonGroup = decoratePlanetoid(
+            geometry.clone(),
+            solarSystemStore.value[key].children[childKey].children[childKey2]
+          )
+          planetGroup.add(moonGroup);
+
     //         const moon = new Planetoid(getPlanetoidInfo(childKey2))
     //         const description = createMesh(
     //           moon,
@@ -119,7 +129,7 @@ function createSolarGroup() {
 
     //         _makeAxisGrid(moon.parent, `${childKey2} Orbit`, 50, f2)
     //         _makeAxisGrid(moon.orbit, `${childKey2}`, 12, f2)
-    //       })
+          })
         }
       })
     }
@@ -138,16 +148,16 @@ function createSolarGroup() {
   return group;
 }
 
-function decoratePlanetoid(sphereMeshClone, data) {
+function decoratePlanetoid(geometryClone, data) {
   // Planetoid node attached to parent at position (0, 0, 0)
   const planetoidGroup = new Group();
   planetoidGroup.name = data.nameId
   // Translate distance from the parent
-  planetoidGroup.position.x = data.distance.value * AppSettings.AU.value * settings.value.scaling_factor
-  planetoidGroup.rotation.z = data.tilt
+  //planetoidGroup.rotation.z = data.tilt
+  planetoidGroup.position.x = data.distance.value * AppSettings.AU.value * settings.value.distance_scaling_factor
 
   // 1. Adjust mesh material according to planetoid data
-  sphereMeshClone.material = data.emissive
+  const sphereMaterial = data.emissive
     ? new MeshStandardMaterial({
       emissive: data.emissive,
       emissiveMap: loader.load(data.emissiveMap),
@@ -159,19 +169,21 @@ function decoratePlanetoid(sphereMeshClone, data) {
     })
 
   if (data.bumpMap) {
-    sphereMeshClone.material.bumpMap = loader.load(data.bumpMap)
-    sphereMeshClone.material.bumpScale = data.bumpScale
+    sphereMaterial.bumpMap = loader.load(data.bumpMap)
+    sphereMaterial.bumpScale = data.bumpScale
   }
 
   if (data.specularMap) {
-    sphereMeshClone.material.specularMap = loader.load(data.specularMap)
-    sphereMeshClone.material.shininess = data.shininess
+    sphereMaterial.specularMap = loader.load(data.specularMap)
+    sphereMaterial.shininess = data.shininess
   }
+
+  const sphereMesh = new Mesh(geometryClone, sphereMaterial);
 
   // Scale mesh by planetoid data factor?
   // Might need to either apply to group or decouple mesh altogether
-  const scaleFactor = (data.radius.value * settings.value.scaling_factor)
-  sphereMeshClone.scale.multiplyScalar(scaleFactor)
+  const sizeScale = (data.radius.value * settings.value.size_scaling_factor)
+  sphereMesh.scale.multiplyScalar(sizeScale)
 
   const radiansPerSecond = convertRotationPerDayToRadians(data.rotation_period.value)
 
@@ -181,8 +193,8 @@ function decoratePlanetoid(sphereMeshClone, data) {
     planetoidGroup.rotation.y += delta * radiansPerSecond * settings.value.timeSpeed;
   };
 
-
-  planetoidGroup.add(sphereMeshClone)
+  planetoidGroup.add(sphereMesh)
+  console.log(planetoidGroup.name, 'distance =', planetoidGroup.position.x, ', scale =', planetoidGroup.scale)
 
   return planetoidGroup;
 }

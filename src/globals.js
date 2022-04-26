@@ -11,7 +11,7 @@ export const AppSettings = Object.freeze({
     position: {x: 0, y: 0, z: 50},
     aspect: window.innerWidth / window.innerHeight, // aspect ratio
     near: 0.1, // near clipping plane
-    far: 1000 // far clipping plane
+    far: 10000 // far clipping plane
   },
   AU: {
     value: 150000000, // [AU] (150,000,000km = 93,000,000mi)
