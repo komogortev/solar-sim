@@ -6,5 +6,10 @@
  */
 
 export const AppSettings = Object.freeze({
-  BG_MAP: '/models/solar-system/textures/8k_stars_milky_way.jpg'
+  BG_MAP: '/models/solar-system/textures/8k_stars_milky_way.jpg',
+  CAMERA: {
+    aspect: window.innerWidth / window.innerHeight, // aspect ratio
+    near: 0.1, // near clipping plane
+    far: 1000 // far clipping plane
+  }
 });

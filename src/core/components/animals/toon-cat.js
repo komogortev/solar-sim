@@ -1,39 +1,23 @@
-import { MathUtils } from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-function createToonCat(gltfLoader) {
-  const radiansPerSecond = MathUtils.degToRad(30);
-  let gltfCat
+import { setupModel } from './setupModel.js';
 
-  gltfLoader.load('/models/toon-cat/toon-cat.gltf', (gltf) => {
-    gltfCat = gltf
-    gltfCat.animations // Array<THREE.AnimationClip>
-    gltfCat.scene // THREE.Group
-    gltfCat.scenes // Array<THREE.Group>
-    gltfCat.cameras // Array<THREE.Camera>
-    gltfCat.asset // Object
-    gltfCat.scene.scale.setScalar(.025)
-    // this method will be called once per frame
-    gltfCat.tick = (delta) => {
-      // increase the model's rotation each frame
-      gltfCat.scene.rotation.z += radiansPerSecond * delta;
-      gltfCat.scene.rotation.x += radiansPerSecond * delta;
-      gltfCat.scene.rotation.y += radiansPerSecond * delta;
-    };
+async function loadToonCat() {
+  const loader = new GLTFLoader();
 
+  const [toonCatData] = await Promise.all([
+    loader.loadAsync('/src/assets/models/toon-cat/toon-cat.gltf'),
+  ]);
 
-  }, undefined, (error) => {
-    console.error(error)
-  })
+  console.log('Meow!', toonCatData);
 
+  const toonCat = setupModel(toonCatData);
+  toonCat.position.set(10, 0, 0);
+  toonCat.scale.set(0.1, 0.1, 0.1);
 
-  // gltfCat.tick = (delta) => {
-  //   // increase the cube's rotation each frame
-  //   gltfCat.rotation.z += radiansPerSecond * delta;
-  //   gltfCat.rotation.x += radiansPerSecond * delta;
-  //   gltfCat.rotation.y += radiansPerSecond * delta;
-  // };
-
-  return gltfCat;
+  return {
+    toonCat
+  };
 }
 
-export { createToonCat };
+export { loadToonCat };

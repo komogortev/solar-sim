@@ -1,11 +1,12 @@
 import { PerspectiveCamera } from 'three';
+import { AppSettings } from '../../globals';
 
-function createCamera(fov = 75,  name = 'perspective camera') {
+function createPerspectiveCamera(fov = 75, name = 'perspective camera') {
   const camera = new PerspectiveCamera(
     fov, // fov = Field Of View
-    window.innerWidth / window.innerHeight, // aspect ratio
-    0.1, // near clipping plane
-    100, // far clipping plane
+    AppSettings.CAMERA.aspect,
+    AppSettings.CAMERA.near,
+    AppSettings.CAMERA.far,
   );
   camera.name = name
 
@@ -15,4 +16,4 @@ function createCamera(fov = 75,  name = 'perspective camera') {
   return camera;
 }
 
-export { createCamera };
+export { createPerspectiveCamera };

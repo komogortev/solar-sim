@@ -1,7 +1,8 @@
 import * as THREE from 'three'
 
 import { loadBirds } from '../components/birds/birds';
-import { createCamera } from '../components/camera';
+import { loadToonCat } from '../components/animals/toon-cat';
+import { createPerspectiveCamera } from '../components/camera';
 import { createAmbientLight } from '../components/lights';
 import { createScene } from '../components/scene';
 
@@ -24,7 +25,7 @@ class World {
     clock = new THREE.Clock();
 
     // World scene tools
-    camera_ = createCamera();
+    camera_ = createPerspectiveCamera();
     renderer_ = createRenderer();
     scene_ = createScene(renderer_, textureLoader);
     loop_ = new Loop(camera_, scene_, renderer_);
@@ -33,7 +34,7 @@ class World {
 
     loop_.updatables.push(controls_);
 
-    const ambLight_ = createAmbientLight();
+    const ambLight_ = createAmbientLight(0xffffff, .5);
     scene_.add(ambLight_);
 
     // Setup reactive listeners
@@ -41,38 +42,24 @@ class World {
     document.addEventListener('click', this.onMouseClick) // Left click
     document.addEventListener('dblclick', this.onMouseDblClick) // Left, Left, Dbl
     document.addEventListener('contextmenu', this.onMouseContext) // Right click
-    this.initializeDemo_()
+    this.initialize_()
   }
 
-  async initializeDemo_() {
+  async initialize_() {
     // Scene objects setup
     const { parrot, flamingo, stork } = await loadBirds();
+    loop_.updatables.push(parrot, flamingo, stork);
     scene_.add(parrot, flamingo, stork);
 
-    // gltfLoader.load('/models/toon-cat/toon-cat.gltf', (gltf) => {
-    //   gltf.animations // Array<THREE.AnimationClip>
-    //   gltf.scene // THREE.Group
-    //   gltf.scenes // Array<THREE.Group>
-    //   gltf.cameras // Array<THREE.Camera>
-    //   gltf.asset // Object
-    //   gltf.scene.scale.setScalar(.025)
-    //   gltf.scene.tick = (delta) => {
-    //     // increase the model's rotation each frame
-    //     gltf.scene.rotation.z += radiansPerSecond * delta;
-    //     gltf.scene.rotation.x += radiansPerSecond * delta;
-    //     gltf.scene.rotation.y += radiansPerSecond * delta;
-    //   };
-
-
-    // }, undefined, (error) => {
-    //   console.error(error)
-    // })
+    const { toonCat } = await loadToonCat();
+    loop_.updatables.push(toonCat);
+    scene_.add(toonCat);
   }
 
   onMouseClick(event) {
     //event.preventDefault();
     if (clickFlag) {
-      return onMouseDblClick(event)
+      return this.onMouseDblClick(event)
     }
     console.log('onMouseClick', event)
     clickFlag = true
