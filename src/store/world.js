@@ -265,7 +265,8 @@ const state = reactive({
 
   loading: true,
   settings: {
-    timeSpeed: 1
+    timeSpeed: 1,
+    sclaling_factor: 0.000001, // 6371km (637100m) >> 6.378m (0.006378km)
   },
 });
 
