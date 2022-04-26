@@ -61,32 +61,34 @@ function initializeLights_() {
   const penumbra = 0.5;
   const decay = 1.0;
 
-  let light = new THREE.SpotLight(
-    0xFFFFFF, 100.0, distance, angle, penumbra, decay);
-  light.castShadow = true;
-  light.shadow.bias = -0.00001;
-  light.shadow.mapSize.width = 4096;
-  light.shadow.mapSize.height = 4096;
-  light.shadow.camera.near = 1;
-  light.shadow.camera.far = 100;
+  // let light = new THREE.SpotLight(
+  //   0xFFFFFF, 100.0, distance, angle, penumbra, decay);
+  // light.castShadow = true;
+  // light.shadow.bias = -0.00001;
+  // light.shadow.mapSize.width = 4096;
+  // light.shadow.mapSize.height = 4096;
+  // light.shadow.camera.near = 1;
+  // light.shadow.camera.far = 100;
 
-  light.position.set(25, 25, 0);
-  light.lookAt(0, 0, 0);
-  scene.add(light);
+  // light.position.set(25, 25, 0);
+  // light.lookAt(0, 0, 0);
+  // scene.add(light);
 
-  const upColour = 0xFFFF80;
-  const downColour = 0x808080;
-  light = new THREE.HemisphereLight(upColour, downColour, 0.5);
-  light.color.setHSL(0.6, 1, 0.6);
-  light.groundColor.setHSL(0.095, 1, 0.75);
-  light.position.set(0, 4, 0);
-  scene.add(light);
+  // const upColour = 0xFFFF80;
+  // const downColour = 0x808080;
+  // light = new THREE.HemisphereLight(upColour, downColour, 0.5);
+  // light.color.setHSL(0.6, 1, 0.6);
+  // light.groundColor.setHSL(0.095, 1, 0.75);
+  // light.position.set(0, 4, 0);
+  // scene.add(light);
 
   const ambientLight = new THREE.AmbientLight(0xffffff, .25)
-  const color = 0xFFFFFF;
-  const intensity = 1;
-  const pointLight = new THREE.PointLight(color, intensity)
-  scene.add(ambientLight, pointLight)
+  scene.add(ambientLight)
+
+  // const color = 0xFFFFFF;
+  // const intensity = 1;
+  // const pointLight = new THREE.PointLight(color, intensity)
+  // scene.add(pointLight)
 
 }
 
