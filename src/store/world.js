@@ -5,256 +5,531 @@ const state = reactive({
   solarSystemStore: {
     'Sun': {
       nameId: 'Sun',
-      distance: 0,
-      scale: 3, // (110*Earth)
-      radius: 700000, //
-      orbital_period: 0.1,
-      rotation_period: 27,
+      radius: {
+        value: 700000,
+        units: 'km'
+      },
+      distance: {
+        value: 0,
+        // [AU] (150,000,000 km; 93,000,000 mi)
+        units: 'AU',
+      },
+      // The orbital period(also revolution period) is the amount of time a given
+      // astronomical object takes to complete one orbit around another object.
+      orbital_period: {
+        value: 0,
+        units: 'day',
+      },
+      // A synodic day(or synodic rotation period or solar day) is the period
+      // for a celestial object to rotate once in relation to the star it is
+      // orbiting, and is the basis of solar time. (full day)
+      rotation_period: {
+        value: 27,
+        units: 'day',
+      }, // days
       tilt: 0,
+
       mass: 332950, // Earth's mass
       emissive: 0xFFFF00,
-      emissiveMap: 'models/solar-system/textures/2k_sun.jpg',
+      emissiveMap: 'models/solar-system/textures/sun/2k_sun.jpg',
       emissiveIntensity: 1,
       children: {
         'Mercury': {
           nameId: 'Mercury',
-          distance: 0.4, //  [AU] (150,000,000 km; 93,000,000 mi)
-          scale: 0.33, // times Earth's
-          radius: 2440, // (*km)
-          orbital_period: 87.97, // Earth's days (24hr)
-          rotation_period: 175.94, // Earth's days (24hr)
-          tilt: 0.3, // degrees to Sun equator
-          mass: 0.055, // Earth's mass
-          temperatures: { // Celsius
-            day: 427,
-            night: -173
+          radius: {
+            value: 2440,
+            units: 'km'
           },
+          distance: {
+            value: 0.4,
+            units: 'AU',
+          },
+          orbital_period: {
+            value: 87.97,
+            units: 'day',
+          },
+          rotation_period: {
+            value: 175.94,
+            units: 'day',
+          },
+          tilt: 0.3,
           textureMap: 'models/solar-system/textures/2k_mercury.jpg'
         },
         'Venus': {
           nameId: 'Venus',
-          distance: 0.7,
-          scale: 0.95,
-          radius: 6052,
-          orbital_period: 224.7,
-          rotation_period: 243,
-          tilt: 3.86,
-          mass: 0.815,
-          temperatures: {
-            day: 464,
-            night: 400
+          radius: {
+            value: 6052,
+            units: 'km'
           },
+          distance: {
+            value: 0.7,
+            units: 'AU',
+          },
+          orbital_period: {
+            value: 224.7,
+            units: 'day',
+          },
+          rotation_period: {
+            value: 243,
+            units: 'day',
+          },
+          tilt: 3.86,
           textureMap: 'models/solar-system/textures/2k_venus_surface.jpg'
         },
         'Earth': {
           nameId: 'Earth',
-          distance: 1,
-          scale: 1,
-          radius: 6371,
-          orbital_period: 365,
-          rotation_period: 1,
-          mass: 1,
-          tilt: 0.41,
-          temperatures: {
-            day: 56.7,
-            night: -89.2
+          radius: {
+            value: 6371,
+            units: 'km'
           },
+          distance: {
+            value: 1,
+            units: 'AU',
+          },
+          orbital_period: {
+            value: 365,
+            units: 'day',
+          },
+          rotation_period: {
+            value: 1,
+            units: 'day',
+          },
+          tilt: 0.41,
+          textureMap: 'models/solar-system/textures/earth/2k_earth_daymap.jpg',
           bumpMap: 'models/solar-system/textures/earth/1k_earth_bump.jpg',
           bumpScale: 0.5,
           specularMap: 'models/solar-system/textures/earth/EarthSpec.png', // shininess map
           shininess: 0.5,
           athmosphereMap: 'models/solar-system/textures/earth/8k_earth_clouds.jpg',
           athmosphereDepth: 0.1125,
-          textureMap: 'models/solar-system/textures/earth/2k_earth_daymap.jpg',
           children: {
             'Moon': {
               nameId: 'Moon',
-              distance: 0.1,
-              scale: 0.3,
-              radius: 1737.4,
-              orbital_period: 28,
-              rotation_period: 0,
+              radius: {
+                value: 1737.4,
+                units: 'km'
+              },
+              distance: {
+                value: 0.00256955529,
+                units: 'AU',
+              },
+              orbital_period: {
+                value: 28,
+                units: 'day',
+              },
+              rotation_period: {
+                value: 0,
+                units: 'day',
+              },
               tilt: 5.145,
-              mass: 0.0123,
               textureMap: 'models/solar-system/textures/2k_moon.jpg',
             }
           }
         },
         'Mars': {
           nameId: 'Mars',
-          distance: 1.5,
-          scale: 0.5,
-          radius: 3396,
-          orbital_period: 687,
-          rotation_period: 1.02,
-          tilt: 5.65,
-          mass: 0.107,
-          temperatures: {
-            day: -143,
-            night: 35
+          radius: {
+            value: 3396,
+            units: 'km'
           },
+          distance: {
+            value: 1.5,
+            units: 'AU',
+          },
+          orbital_period: {
+            value: 687,
+            units: 'day',
+          },
+          rotation_period: {
+            value: 1.02,
+            units: 'day',
+          },
+          tilt: 5.65,
           textureMap: 'models/solar-system/textures/mars/2k_mars.jpg',
           bumpMap: 'models/solar-system/textures/mars/1k_mars_bump.jpg',
           bumpScale: 0.5,
         },
         'Jupiter': {
           nameId: 'Jupiter',
-          distance: 5.2,
-          scale: 11,
-          radius: 69911,
-          orbital_period: 4380,
-          rotation_period: 1.02,
-          mass: 318,
+          radius: {
+            value: 69911,
+            units: 'km'
+          },
+          distance: {
+            value: 5.2,
+            units: 'AU',
+          },
+          orbital_period: {
+            value: 4380,
+            units: 'day',
+          },
+          rotation_period: {
+            value: 0.413575,
+            units: 'day',
+          },
           textureMap: 'models/solar-system/textures/2k_jupiter.jpg',
           children: {
             Ganymede: {
               nameId: 'Ganymede',
-              distance: .2,
-              scale: 1,
-              orbital_period: 7,
-              rotation_period: 0,
+              radius: {
+                value: 2634.1,
+                units: 'km'
+              },
+              distance: {
+                value: 0.007152508221,
+                units: 'AU',
+              },
+              orbital_period: {
+                value: 7.16,
+                units: 'day',
+              },
+              rotation_period: {
+                value: 0,
+                units: 'day',
+              },
+              tilt: 0.33,
               color: 0xF3F2F2
             }
           }
         },
         'Saturn': {
           nameId: 'Saturn',
-          distance: 9.5,
-          scale: 9,
-          radius: 58232,
-          orbital_period: 10767.5,
-          rotation_period: 0.475,
-          mass: 95,
+          radius: {
+            value: 58232,
+            units: 'km'
+          },
+          distance: {
+            value: 9.5,
+            units: 'AU',
+          },
+          orbital_period: {
+            value: 29 * 365,
+            units: 'day',
+          },
+          rotation_period: {
+            value: 0.43416,
+            units: 'day',
+          },
+          tilt: 26.73,
           textureMap: 'models/solar-system/textures/2k_saturn.jpg',
           children: {
             Titan: {
               nameId: 'Titan',
-              distance: 0.8,
-              scale: 1,
-              orbital_period: 500,
-              rotation_period: 0,
+              radius: {
+                value: 2574.73,
+                units: 'km'
+              },
+              distance: {
+                value: 0.008021504547,
+                units: 'AU',
+              },
+              orbital_period: {
+                value: 15.945,
+                units: 'day',
+              },
+              rotation_period: {
+                value: 0,
+                units: 'day',
+              },
+              tilt: 0,
               color: 0xF1E17B
             },
             Enceladus: {
               nameId: 'Enceladus',
-              distance: 1,
-              scale: 1,
-              orbital_period: 510,
-              rotation_period: 0,
+              radius: {
+                value: 252.1,
+                units: 'km'
+              },
+              distance: {
+                value: 0.00159106543,
+                units: 'AU',
+              },
+              orbital_period: {
+                value: 1.375,
+                units: 'day',
+              },
+              rotation_period: {
+                value: 0,
+                units: 'day',
+              },
+              tilt: 0,
               color: 0xDADADA
             },
             Iapetus: {
               nameId: 'Iapetus',
-              distance: 1.2,
-              scale: 1,
-              orbital_period: 520,
-              rotation_period: 0,
+              radius: {
+                value: 734.5,
+                units: 'km'
+              },
+              distance: {
+                value: 0.02380381474,
+                units: 'AU',
+              },
+              orbital_period: {
+                value: 79,
+                units: 'day',
+              },
+              rotation_period: {
+                value: 0,
+                units: 'day',
+              },
+              tilt: 0,
               color: 0x506855
             },
             Rhea: {
               nameId: 'Rhea',
-              distance: 1.4,
-              scale: 1,
-              orbital_period: 530,
-              rotation_period: 0,
+              radius: {
+                value: 763.8,
+                units: 'km'
+              },
+              distance: {
+                value: 0.00352277741,
+                units: 'AU',
+              },
+              orbital_period: {
+                value: 4.5,
+                units: 'day',
+              },
+              rotation_period: {
+                value: 0,
+                units: 'day',
+              },
+              tilt: 0,
               color: 0xDADADA
             },
             Dione: {
               nameId: 'Dione',
-              distance: 1.6,
-              scale: 1,
-              orbital_period: 540,
-              rotation_period: 0,
+              radius: {
+                value: 561.4,
+                units: 'km'
+              },
+              distance: {
+                value: 0.00252276318,
+                units: 'AU',
+              },
+              orbital_period: {
+                value: 2.75,
+                units: 'day',
+              },
+              rotation_period: {
+                value: 0,
+                units: 'day',
+              },
+              tilt: 0,
               color: 0xDADADA
             },
             Tethys: {
               nameId: 'Tethys',
-              distance: 1.8,
-              scale: 1,
-              orbital_period: 550,
-              rotation_period: 0,
+              radius: {
+                value: 531,
+                units: 'km'
+              },
+              distance: {
+                value: 0.0019719532,
+                units: 'AU',
+              },
+              orbital_period: {
+                value: 1.875,
+                units: 'day',
+              },
+              rotation_period: {
+                value: 0,
+                units: 'day',
+              },
+              tilt: 0,
               color: 0xDADADA
             },
             Mimas: {
               nameId: 'Mimas',
-              distance: 2,
-              scale: 1,
-              orbital_period: 560,
-              rotation_period: 0,
+              radius: {
+                value: 198.2,
+                units: 'km'
+              },
+              distance: {
+                value: 0.0012433332,
+                units: 'AU',
+              },
+              orbital_period: {
+                value: 0.96,
+                units: 'day',
+              },
+              rotation_period: {
+                value: 0,
+                units: 'day',
+              },
+              tilt: 0,
               color: 0xDADADA
             },
           }
         },
         Uranus: {
           nameId: 'Uranus',
-          distance: 19.2,
-          scale: 4,
-          orbital_period: 30660,
-          rotation_period: 0.71832,
-          radius: 25362,
-          mass: 14,
-          // color: 0x85E9F7,
+          radius: {
+            value: 25362,
+            units: 'km'
+          },
+          distance: {
+            value: 19.2,
+            units: 'AU',
+          },
+          orbital_period: {
+            value: 30660,
+            units: 'day',
+          },
+          rotation_period: {
+            value: 0.71832,
+            units: 'day',
+          },
+          tilt: 97.77,
           textureMap: 'models/solar-system/textures/2k_uranus.jpg',
           children: {
             Titania: {
               nameId: 'Titania',
-              distance: 0.8,
-              scale: 1,
-              orbital_period: 500,
-              rotation_period: 0,
+              radius: {
+                value: 788.4,
+                units: 'km'
+              },
+              distance: {
+                value: 0.00291648536,
+                units: 'AU',
+              },
+              orbital_period: {
+                value: 8.7,
+                units: 'day',
+              },
+              rotation_period: {
+                value: 0,
+                units: 'day',
+              },
+              tilt: 0,
               color: 0xDADADA
             },
             Oberon: {
               nameId: 'Oberon',
-              distance: 1,
-              scale: 1,
-              orbital_period: 510,
-              rotation_period: 0,
+              radius: {
+                value: 761.4,
+                units: 'km'
+              },
+              distance: {
+                value: 0.00390045659,
+                units: 'AU',
+              },
+              orbital_period: {
+                value: 13,
+                units: 'day',
+              },
+              rotation_period: {
+                value: 0,
+                units: 'day',
+              },
+              tilt: 0,
               color: 0xF9D8F6
             },
             Umbriel: {
               nameId: 'Umbriel',
-              distance: 1.2,
-              scale: 1,
-              orbital_period: 520,
-              rotation_period: 0,
+              radius: {
+                value: 584.7,
+                units: 'km'
+              },
+              distance: {
+                value: 0.00177810017,
+                units: 'AU',
+              },
+              orbital_period: {
+                value: 4.125,
+                units: 'day',
+              },
+              rotation_period: {
+                value: 0,
+                units: 'day',
+              },
+              tilt: 0,
               color: 0xDADADA
             },
             Ariel: {
               nameId: 'Ariel',
-              distance: 1.4,
-              scale: 1,
-              orbital_period: 530,
-              rotation_period: 0,
+              radius: {
+                value: 578.9,
+                units: 'km'
+              },
+              distance: {
+                value: 0.00127608768,
+                units: 'AU',
+              },
+              orbital_period: {
+                value: 2.5,
+                units: 'day',
+              },
+              rotation_period: {
+                value: 0,
+                units: 'day',
+              },
+              tilt: 0,
               color: 0xDADADA
             },
             Miranda: {
               nameId: 'Miranda',
-              distance: 1.6,
-              scale: 1,
-              orbital_period: 540,
-              rotation_period: 0,
+              radius: {
+                value: 235.8,
+                units: 'km'
+              },
+              distance: {
+                value: 0.000868327867,
+                units: 'AU',
+              },
+              orbital_period: {
+                value: 1.413479,
+                units: 'day',
+              },
+              rotation_period: {
+                value: 0,
+                units: 'day',
+              },
+              tilt: 0,
               color: 0xDADADA
             },
           }
         },
         Neptun: {
           nameId: 'Neptun',
-          distance: 30.1,
-          scale: 4,
-          orbital_period: 60225,
-          rotation_period: 0.67125,
-          radius: 24622,
-          mass: 17,
-          // color: 0x173498,
+          radius: {
+            value: 24622,
+            units: 'km'
+          },
+          distance: {
+            value: 30.1,
+            units: 'AU',
+          },
+          orbital_period: {
+            value: 165 * 365,
+            units: 'day',
+          },
+          rotation_period: {
+            value: 0.67083,
+            units: 'day',
+          },
+          tilt: 28.32,
           textureMap: 'models/solar-system/textures/2k_neptune.jpg',
           children: {
             Triton: {
               nameId: 'Triton',
-              distance: 0.8,
-              scale: 1,
-              orbital_period: 500,
-              rotation_period: 0,
+              radius: {
+                value: 1353.4,
+                units: 'km'
+              },
+              distance: {
+                value: 0.002371417443,
+                units: 'AU',
+              },
+              orbital_period: {
+                value: 5.875,
+                units: 'day',
+              },
+              rotation_period: {
+                value: 0,
+                units: 'day',
+              },
+              tilt: 0,
               color: 0xDAB0FF
             },
           }
@@ -266,7 +541,7 @@ const state = reactive({
   loading: true,
   settings: {
     timeSpeed: 1,
-    sclaling_factor: 0.000001, // 6371km (637100m) >> 6.378m (0.006378km)
+    scaling_factor: 0.00001, // 6371km (637100m) >> 6.378m (0.006378km)
   },
 });
 

@@ -3,13 +3,15 @@ import * as THREE from 'three'
 import { loadBirds } from '../components/birds/birds';
 import { loadToonCat } from '../components/animals/toon-cat';
 import { createPerspectiveCamera } from '../components/camera';
-import { createAmbientLight } from '../components/lights';
+import { createAmbientLight, createHemisphereLight } from '../components/lights';
+import { createSolarGroup } from '../components/solarGroup.js';
 import { createScene } from '../components/scene';
 
 import { createControls } from '../systems/controls';
 import { createRenderer } from '../systems/renderer';
 import { Resizer } from '../systems/Resizer';
 import { Loop } from '../systems/Loop';
+
 
 let camera_, controls_, renderer_, scene_, loop_,
   textureLoader, gltfLoader, raycaster, mouse, clock,
@@ -47,19 +49,22 @@ class World {
 
   async initialize_() {
     // Scene objects setup
-    const { parrot, flamingo, stork } = await loadBirds();
-    loop_.updatables.push(parrot, flamingo, stork);
-    scene_.add(parrot, flamingo, stork);
+    // const { parrot, flamingo, stork } = await loadBirds();
+    // loop_.updatables.push(parrot, flamingo, stork);
+    // scene_.add(parrot, flamingo, stork);
 
-    const { toonCat } = await loadToonCat();
-    loop_.updatables.push(toonCat);
-    scene_.add(toonCat);
+    // const { toonCat } = await loadToonCat();
+    // loop_.updatables.push(toonCat);
+    // scene_.add(toonCat);
+
+    const solarGroup = createSolarGroup();
+    loop_.updatables.push(solarGroup.children[0]);
+    scene_.add(solarGroup);
   }
 
   onMouseClick(event) {
-    //event.preventDefault();
     if (clickFlag) {
-      return this.onMouseDblClick(event)
+      return event.preventDefault();
     }
     console.log('onMouseClick', event)
     clickFlag = true

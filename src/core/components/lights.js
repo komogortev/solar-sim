@@ -1,4 +1,11 @@
-import { DirectionalLight, PointLight, RectAreaLight, AmbientLight, SpotLight, HemisphereLight  } from 'three';
+import {
+  DirectionalLight,
+  PointLight,
+  RectAreaLight,
+  AmbientLight,
+  SpotLight,
+  HemisphereLight
+} from 'three';
 /**
  * Two ways to light the objects:
  * 1. Direct lighting: light rays that come directly from the bulb and hit an object.
@@ -75,7 +82,7 @@ function createAmbientLight(color = 0xffffff, intensity = .25) {
 }
 
 function createHemisphereLight(upColour = 0xFFFF80, downColour = 0x808080) {
-  hemisphereLight = new HemisphereLight(upColour, downColour, 0.5);
+  const hemisphereLight = new HemisphereLight(upColour, downColour, 0.5);
   hemisphereLight.color.setHSL(0.6, 1, 0.6);
   hemisphereLight.groundColor.setHSL(0.095, 1, 0.75);
   hemisphereLight.position.set(0, 4, 0);

@@ -1,4 +1,4 @@
-import { Color, Scene, WebGLCubeRenderTarget } from 'three';
+import { Scene, WebGLCubeRenderTarget } from 'three';
 import { AppSettings } from '../../globals'
 
 function createScene(renderer_, textureLoader) {
