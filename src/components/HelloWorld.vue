@@ -162,12 +162,10 @@ class World {
     scene_ = createScene();
     loop_ = new Loop(camera_, scene_, renderer_);
     //renderer_.append(renderer_.domElement);
-
     const cube_ = createCube();
     const light_ = createLights();
 
     loop_.updatables.push(cube_);
-
     scene_.add(cube_, light_);
 
     const resizer = new Resizer(canvas, camera_, renderer_);
