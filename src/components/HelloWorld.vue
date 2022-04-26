@@ -157,9 +157,12 @@ let camera_, renderer_, scene_, loop_
 
 class World {
   constructor(canvas) {
+    textureLoader = new THREE.TextureLoader();
+    gltfLoader = new GLTFLoader();
+
     camera_ = createCamera();
     renderer_ = createRenderer(canvas);
-    scene_ = createScene();
+    scene_ = createScene(renderer_, textureLoader);
     loop_ = new Loop(camera_, scene_, renderer_);
     //renderer_.append(renderer_.domElement);
     const cube_ = createCube();

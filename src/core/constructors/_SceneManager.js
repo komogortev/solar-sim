@@ -10,7 +10,7 @@ import {
   PCFSoftShadowMap,
   sRGBEncoding
 } from 'three';
-import { FirstPersonCamera } from '../systems/FpsCamera'
+import { FirstPersonCamera } from '../systems/_FpsCamera'
 import { AppSettings } from '../../globals';
 
 class SceneManager {

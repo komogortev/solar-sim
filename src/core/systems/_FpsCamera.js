@@ -1,5 +1,5 @@
 import { Quaternion, Vector3, Ray } from 'three';
-import { InputController } from './InputController'
+import { InputController } from './_InputController'
 
 class FirstPersonCamera {
   constructor(camera, objects) {
