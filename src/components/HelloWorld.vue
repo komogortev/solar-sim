@@ -5,6 +5,15 @@ import { OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { AppSettings } from '../globals'
 
+import { createCamera } from '../core/components/camera';
+import { createCube } from '../core/components/cube';
+import { createLights } from '../core/components/lights';
+import { createScene } from '../core/components/scene';
+
+import { createRenderer } from '../core/systems/renderer';
+import { Resizer } from '../core/systems/Resizer';
+import { Loop } from '../core/systems/Loop';
+
 defineProps({
   msg: String
 })
@@ -12,7 +21,7 @@ defineProps({
 let _SCENE = null;
 let canvas, scene, renderer, sceneCamera, sceneControls, textureLoader, gltfLoader
 let ambientLight, light
-let raycaster, mouse, clock
+let raycaster, mouse, clock, loop
 let clickFlag, contextClickFlag
 
 const sizes = {
@@ -36,7 +45,7 @@ function initialize() {
 function initializeRenderer_() {
   canvas = document.getElementById("c");
   renderer = new THREE.WebGLRenderer({ canvas });
-  renderer.setSize(sizes.w, sizes.h);
+  renderer.setSize(sizes.w, window.innerHeight);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 }
@@ -144,6 +153,51 @@ function onMouseContext (event) {
   contextClickFlag = true
 }
 
+let camera_, renderer_, scene_, loop_
+
+class World {
+  constructor(canvas) {
+    camera_ = createCamera();
+    renderer_ = createRenderer(canvas);
+    scene_ = createScene();
+    loop_ = new Loop(camera_, scene_, renderer_);
+    //renderer_.append(renderer_.domElement);
+
+    const cube_ = createCube();
+    const light_ = createLights();
+
+    loop_.updatables.push(cube_);
+
+    scene_.add(cube_, light_);
+
+    const resizer = new Resizer(canvas, camera_, renderer_);
+  }
+
+  render() {
+    // draw a single frame
+    renderer_.render(scene_, camera_);
+  }
+
+  start() {
+    loop_.start();
+  }
+
+  stop() {
+    loop_.stop();
+  }
+}
+
+function main() {
+  // Get a reference to the container element
+  const canvas = document.querySelector('#c');
+
+  // create a new world
+  const world = new World(canvas);
+
+  // start the animation loop
+  world.start();
+}
+
 function animate() {
   renderer.render(scene, sceneCamera)
   requestAnimationFrame(animate)
@@ -152,8 +206,9 @@ function animate() {
 const count = ref(0)
 
 onMounted(() => {
-  initialize()
-  animate()
+  //initialize()
+  //animate()
+  main()
 });
 
 </script>
@@ -171,5 +226,17 @@ onMounted(() => {
   text-align: center;
   z-index: 100;
   display:block;
+}
+#c {
+  /* tell our scene container to take up the full page */
+  /* position: absolute;
+  width: 100%;
+  height: 100%; */
+
+  /*
+    Set the container's background color to the same as the scene's
+    background to prevent flashing on load
+  */
+  /* background-color: skyblue; */
 }
 </style>
