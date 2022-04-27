@@ -11,7 +11,7 @@ function createPerspectiveCamera(fov = 75, name = 'perspective camera') {
   camera.name = name
 
   // move the camera back so we can view the scene
-  camera.position.set(0, 0, 100);
+  camera.position.set(0, 0, 50);
   camera.lookAt(0, 0, 0);
   return camera;
 }

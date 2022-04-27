@@ -28,11 +28,15 @@ function createControls(camera, canvas) {
           if (intersection[i].object && intersection[i].object.name
             && intersection[i].object.name.includes(' MeshGroup')) {
             console.log('found touch', intersection[i])
+            // var worldPosition = new THREE.Vector3();
+            // entityEl.object3D.getWorldPosition(worldPosition);
+            const meshSurface = intersection[i].object.scale.x
+            const cameraOrbitmultiplier = 2
             controls.saveState();
             controls.target.copy(intersection[i].object.position);
 
             camera.lookAt(intersection[i].object.position);
-            camera.position.copy(intersection[i].object.position).add(new Vector3(camera.position.x, camera.position.y, camera.position.z + 10));
+            camera.position.copy(intersection[i].object.position).add(new Vector3(0, 0, meshSurface * cameraOrbitmultiplier));
             camera.updateProjectionMatrix()
             break
           }
