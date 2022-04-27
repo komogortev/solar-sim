@@ -12,7 +12,7 @@ const state = reactive({
   solarSystemStore: {
     'Sun': {
       nameId: 'Sun',
-      radius:   { km: 700000 * 0.01 }, // multiply by additional scale down
+      radius:   { km: 700000 * 0.1 }, // multiply by additional scale down
       distance: { AU: 0 },
       orbital_period:  { days: 0 },
       rotation_period: { days: 27 },
@@ -24,7 +24,7 @@ const state = reactive({
         'Mercury': {
           nameId: 'Mercury',
           radius:   { km: 2440 },
-          distance: { AU: 1.4 },
+          distance: { AU: 0.4 },
           orbital_period: { days: 87.97 },
           rotation_period: { days: 175.94 },
           tilt: 0.3,
@@ -250,8 +250,12 @@ const state = reactive({
   loading: true,
   settings: {
     timeSpeed: 1,
-    size_scaling_factor: 0.001, // 6371km (637100m) >> 6.378m (0.006378km)
-    distance_scaling_factor: 0.00001, // 6371km (637100m) >> 6.378m (0.006378km)
+    size_scaling: {
+      multiplier: 0.0001
+    },
+    distance_scaling: {
+      divider: 10000000
+    },
   },
 });
 
@@ -273,6 +277,9 @@ function _findObjectSection(object, sectionKey) {
 export default function useWorldStore() {
   const getPlanetoidInfo = ((nameId) => {
     return _findObjectSection(state.solarSystemStore, nameId)
+  })
+  const getSettings = (() => {
+    return state.settings
   })
 
   const setSolarState = (solar) => {

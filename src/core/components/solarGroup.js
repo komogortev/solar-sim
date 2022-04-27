@@ -9,7 +9,8 @@ import {
   MeshBasicMaterial,
   MeshLambertMaterial,
   TextureLoader,
-  SphereGeometry
+  SphereGeometry,
+  Color
 } from 'three';
 
 import { AxisGridHelper } from '../../utils/axis-helper'
@@ -30,15 +31,15 @@ function createSolarGroup(guiFolder) {
   const group = new Group();
 
   Object.keys(solarSystemStore.value).forEach(key => {
-    const info = getPlanetoidInfo(key)
-    const starMesh = decoratePlanetoid(info)
+    const starMesh = decoratePlanetoid(getPlanetoidInfo(key))
     group.add(starMesh);
 
     // Create planet meshes
     if (solarSystemStore.value[key].children) {
       Object.keys(solarSystemStore.value[key].children).forEach(childKey => {
         const planetMesh = decoratePlanetoid(
-          getPlanetoidInfo(childKey)
+          getPlanetoidInfo(childKey),
+          starMesh.scale.x
         )
         group.add(planetMesh);
 
@@ -59,7 +60,7 @@ function createSolarGroup(guiFolder) {
   return group;
 }
 
-function decoratePlanetoid(data, parentScale) {
+function decoratePlanetoid(data, parentScale = 0) {
   const geometry = new SphereBufferGeometry(1, 16, 16);
   // 1. Adjust mesh material according to planetoid data
   const sphereMaterial = data.emissive
@@ -69,7 +70,7 @@ function decoratePlanetoid(data, parentScale) {
       emissiveIntensity: 1,
     })
     : new MeshPhongMaterial({
-      color: data.color ? data.color : '#fff',
+      color: data.color ? new Color(data.color)  : '#fff',
       map: loader.load(data.textureMap),
     })
 
@@ -85,13 +86,16 @@ function decoratePlanetoid(data, parentScale) {
 
   const sphereMesh = new Mesh(geometry, sphereMaterial);
   sphereMesh.name = `${data.nameId} MeshGroup`
-  //sphereMesh.rotation.z = data.tilt
-  sphereMesh.position.x = (data.distance.AU * AppSettings.AU.km * settings.value.distance_scaling_factor).toFixed(2)
 
   // Scale mesh by planetoid data factor?
   // Might need to either apply to group or decouple mesh altogether
-  const sizeScale = data.radius.km //* settings.value.size_scaling_factor
-  sphereMesh.scale.multiplyScalar(sizeScale)
+  const sizeScale = data.radius.km * settings.value.size_scaling.multiplier
+  sphereMesh.scale.multiplyScalar(sizeScale.toFixed(2))
+
+  //sphereMesh.rotation.z = data.tilt
+  const distanceMultiplier = AppSettings.AU.km / settings.value.distance_scaling.divider
+  const planetDistanceOffset = parentScale > 0 ? parentScale + sphereMesh.scale.x : 0
+  sphereMesh.position.x = (data.distance.AU * distanceMultiplier) + planetDistanceOffset
 
   const radiansPerSecond = convertRotationPerDayToRadians(data.rotation_period.days)
 
@@ -101,7 +105,7 @@ function decoratePlanetoid(data, parentScale) {
     sphereMesh.rotation.y += delta * radiansPerSecond * settings.value.timeSpeed;
   };
 
-  //console.log(sphereMesh.name, 'distance =', sphereMesh.position.x, ', scale =', sphereMesh.scale)
+  console.log(sphereMesh.name, 'distance =', sphereMesh.position.x, ', scale =', sphereMesh.scale.x)
 
   return sphereMesh;
 }

@@ -42,8 +42,8 @@ class World {
     controls_ = createControls(this.camera_, renderer_.domElement);
     loop_.updatables.push(controls_);
 
-    const ambLight_ = createAmbientLight(0xffffff, .5);
-    const pointLight_ = createPointLight(0xffffff, 1000);
+    const ambLight_ = createAmbientLight(0xffffff, 1);
+    const pointLight_ = createPointLight(0xffffff, 10);
     scene_.add(ambLight_, pointLight_);
 
     // Setup reactive listeners
