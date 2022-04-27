@@ -66,7 +66,7 @@ function onMouseClick(event) {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
   clickFlag = true
-  console.log('onMouseClick', clickFlag, event, mouse)
+  console.debug('onMouseClick', clickFlag, event, mouse)
 }
 
 function onMouseDblClick(event) {
@@ -74,13 +74,13 @@ function onMouseDblClick(event) {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
   dblClickFlag = true
-  console.log('onMouseDblClick', dblClickFlag, event, mouse)
+  console.debug('onMouseDblClick', dblClickFlag, event, mouse)
 }
 
 function onMouseContext(event) {
   //event.preventDefault();
-  console.log('onMouseContext', event)
   contextClickFlag = true
+  console.debug('onMouseContext', event)
 }
 
 export { createControls };
