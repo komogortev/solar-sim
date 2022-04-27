@@ -39,7 +39,7 @@ class World {
     loop_.updatables.push(controls_);
 
     const ambLight_ = createAmbientLight(0xffffff, .5);
-    const pointLight_ = createPointLight(0xffffff, 10);
+    const pointLight_ = createPointLight(0xffffff, 1000);
     scene_.add(ambLight_, pointLight_);
 
     // Setup reactive listeners

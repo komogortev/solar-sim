@@ -6,7 +6,10 @@ import {
   Mesh,
   MeshStandardMaterial,
   MeshPhongMaterial,
-  TextureLoader
+  MeshBasicMaterial,
+  MeshLambertMaterial,
+  TextureLoader,
+  SphereGeometry
 } from 'three';
 
 import { Planetoid } from '../constructors/Planetoid'
@@ -139,7 +142,6 @@ function createSolarGroup() {
   // group.scale.multiplyScalar(2);
 
 
-
   // each frame, rotate the entire group of spheres
   group.tick = (delta) => {
     //group.rotation.y -= delta * radiansPerSecond;
@@ -158,13 +160,13 @@ function decoratePlanetoid(geometryClone, data) {
 
   // 1. Adjust mesh material according to planetoid data
   const sphereMaterial = data.emissive
-    ? new MeshStandardMaterial({
+    ? new MeshPhongMaterial({
       emissive: data.emissive,
       emissiveMap: loader.load(data.emissiveMap),
       emissiveIntensity: 1,
     })
     : new MeshPhongMaterial({
-      color: data.color ? data.color : '#ccc',
+      color: data.color ? data.color : '#fff',
       map: loader.load(data.textureMap),
     })
 
@@ -194,6 +196,7 @@ function decoratePlanetoid(geometryClone, data) {
   };
 
   planetoidGroup.add(sphereMesh)
+
   console.log(planetoidGroup.name, 'distance =', planetoidGroup.position.x, ', scale =', planetoidGroup.scale)
 
   return planetoidGroup;
