@@ -14,7 +14,7 @@ export const AppSettings = Object.freeze({
     far: 10000 // far clipping plane
   },
   AU: {
-    value: 150000000, // [AU] (150,000,000km = 93,000,000mi)
-    units: 'km',
+    km: 150000000,
+    mi: 93000000
   }
 });

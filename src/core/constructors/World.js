@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import GUI from 'lil-gui';
 
 import { loadBirds } from '../components/birds/birds';
 import { loadToonCat } from '../components/animals/toon-cat';
@@ -11,28 +12,34 @@ import { createControls } from '../systems/controls';
 import { createRenderer } from '../systems/renderer';
 import { Resizer } from '../systems/Resizer';
 import { Loop } from '../systems/Loop';
+import useWorldStore from "../../store/world";
 
+const { solarSystemStore, settings, setTimeSpeed, getPlanetoidInfo } = useWorldStore();
 
 let camera_, controls_, renderer_, scene_, loop_,
-  textureLoader, gltfLoader, raycaster, mouse, clock,
-  clickFlag, contextClickFlag, clickCount,
-  solarGroup_
+  gltfLoader, raycaster, mouse,
+  clickFlag, contextClickFlag, solarGroup_
 
 class World {
   constructor(container) {
     this.container = container;
+    this.gui = new GUI();
+    this.timeSpeedSetting = { speed: 1 }
+    // Add sliders to number fields by passing min and max
+    this.gui.add(this.timeSpeedSetting, 'speed', -100, 100, 1)
+      .name('Time speed')
+      .onChange(value => { setTimeSpeed(value) })
+
     // General tools
-    textureLoader = new THREE.TextureLoader();
-    clock = new THREE.Clock();
-    clickCount = 0
+    this.textureLoader = new THREE.TextureLoader();
 
     // World scene tools
-    camera_ = createPerspectiveCamera();
+    this.camera_ = createPerspectiveCamera();
     renderer_ = createRenderer();
-    scene_ = createScene(renderer_, textureLoader);
-    loop_ = new Loop(camera_, scene_, renderer_);
+    scene_ = createScene(renderer_, this.textureLoader);
+    loop_ = new Loop(this.camera_, scene_, renderer_);
     container.append(renderer_.domElement);
-    controls_ = createControls(camera_, renderer_.domElement);
+    controls_ = createControls(this.camera_, renderer_.domElement);
     loop_.updatables.push(controls_);
 
     const ambLight_ = createAmbientLight(0xffffff, .5);
@@ -40,7 +47,7 @@ class World {
     scene_.add(ambLight_, pointLight_);
 
     // Setup reactive listeners
-    const resizer = new Resizer(this.container, camera_, renderer_);
+    const resizer = new Resizer(this.container, this.camera_, renderer_);
     this.initialize_()
   }
 
@@ -54,16 +61,19 @@ class World {
     // loop_.updatables.push(toonCat);
     // scene_.add(toonCat);
 
-    solarGroup_ = createSolarGroup();
-    solarGroup_.children[0].children.forEach(mesh => {
+    const f1 = this.gui.addFolder('SolarSystem')
+    solarGroup_ = createSolarGroup(f1);
+    solarGroup_.children.forEach(mesh => {
       loop_.updatables.push(mesh);
     })
+    console.log(solarGroup_)
+    console.log(loop_.updatables)
     scene_.add(solarGroup_);
   }
 
   render() {
     // draw a single frame
-    renderer_.render(scene_, camera_);
+    renderer_.render(scene_, this.camera_);
   }
 
   start() {
