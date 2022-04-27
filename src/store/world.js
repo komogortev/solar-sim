@@ -30,7 +30,8 @@ const state = reactive({
       tilt: 0,
       emissive: 0xFFFF00,
       emissiveMap: 'models/solar-system/textures/sun/2k_sun.jpg',
-      emissiveIntensity: 1,
+      //emissiveMap: 'models/solar-system/textures/sun/sun_map.jpg',
+      emissiveIntensity: 10,
       children: {
         'Mercury': {
           nameId: 'Mercury',
@@ -535,12 +536,11 @@ const state = reactive({
       }
     },
   },
-
   loading: true,
   settings: {
     timeSpeed: 1,
-    size_scaling_factor: 0.001, // 6371km (637100m) >> 6.378m (0.006378km)
-    distance_scaling_factor: 0.000001, // 6371km (637100m) >> 6.378m (0.006378km)
+    size_scaling_factor: 0.0001, // 6371km (637100m) >> 6.378m (0.006378km)
+    distance_scaling_factor: 0.0001, // 6371km (637100m) >> 6.378m (0.006378km)
   },
 });
 
@@ -551,10 +551,12 @@ function _findObjectSection(object, sectionKey)  {
     if (key === sectionKey) {
       result = object[key]
     } else if (object[key].children) {
-      result = findObjectSection(object[key].children, sectionKey)
+      result = _findObjectSection(object[key].children, sectionKey)
     }
 
     if (result) {
+      result.radius.value = result.radius.value * state.settings.size_scaling_factor
+      result.distance.value = result.distance.value * state.settings.distance_scaling_factor
       return result
     }
   }

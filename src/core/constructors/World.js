@@ -23,8 +23,6 @@ class World {
     this.container = container;
     // General tools
     textureLoader = new THREE.TextureLoader();
-    raycaster = new THREE.Raycaster()
-    mouse = new THREE.Vector2(1, 1)
     clock = new THREE.Clock();
     clickCount = 0
 
@@ -35,7 +33,6 @@ class World {
     loop_ = new Loop(camera_, scene_, renderer_);
     container.append(renderer_.domElement);
     controls_ = createControls(camera_, renderer_.domElement);
-
     loop_.updatables.push(controls_);
 
     const ambLight_ = createAmbientLight(0xffffff, .5);
@@ -44,9 +41,6 @@ class World {
 
     // Setup reactive listeners
     const resizer = new Resizer(this.container, camera_, renderer_);
-    document.addEventListener('click', this.onMouseClick) // Left click
-    document.addEventListener('dblclick', this.onMouseDblClick) // Left, Left, Dbl
-    document.addEventListener('contextmenu', this.onMouseContext) // Right click
     this.initialize_()
   }
 
@@ -61,36 +55,10 @@ class World {
     // scene_.add(toonCat);
 
     solarGroup_ = createSolarGroup();
-    loop_.updatables.push(solarGroup_.children[0]);
+    solarGroup_.children[0].children.forEach(mesh => {
+      loop_.updatables.push(mesh);
+    })
     scene_.add(solarGroup_);
-  }
-
-  onMouseClick(event) {
-    if (clickFlag) {
-      return event.preventDefault();
-    }
-    console.log('onMouseClick', event)
-    clickFlag = true
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
-
-    // jump camera to next planetoid
-    // clickCount = clickCount < solarGroup_.children.length ? clickCount + 1: 0
-    // const position = solarGroup_.children[clickCount].position
-    // camera_.position.x = position.x;
-    // camera_.lookAt(position);
-    // controls_.update();
-  }
-
-  onMouseDblClick(event) {
-    //event.preventDefault();
-    console.log('onMouseDblClick', event)
-  }
-
-  onMouseContext(event) {
-    //event.preventDefault();
-    console.log('onMouseContext', event)
-    contextClickFlag = true
   }
 
   render() {

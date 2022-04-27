@@ -1,14 +1,86 @@
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { Raycaster, Vector2, Vector3 } from 'three'
+
+let clickFlag = false
+let dblClickFlag = false
+let contextClickFlag = false
+const raycaster = new Raycaster()
+const mouse = new Vector2(1, 1)
 
 function createControls(camera, canvas) {
   const controls = new OrbitControls(camera, canvas);
-
   controls.enableDamping = true;
 
-  // forward controls.update to our custom .tick method
-  controls.tick = () => controls.update();
+  // Forward controls.update to our custom .tick method
+  controls.tick = (delta, updatables) => {
+    // Act on left click
+    if (dblClickFlag) {
+      dblClickFlag = false
+      // find btn mesh connection and switch to its camera
+      raycaster.setFromCamera(mouse, camera);
+      // ! avoid intersectObjects undefined object.layer error for OrbitControls in updatables
+      const eligibleMeshes = updatables.filter(u => u.type === 'Mesh')
+      const intersection = raycaster.intersectObjects(eligibleMeshes);
+
+      if (intersection.length > 0) {
+        // find celestial object that has name
+        for (var i = 0; i < intersection.length; i++) {
+          if (intersection[i].object && intersection[i].object.name
+            && intersection[i].object.name.includes(' MeshGroup')) {
+            console.log('found touch', intersection[i])
+            controls.saveState();
+            controls.target.copy(intersection[i].object.position);
+
+            camera.lookAt(intersection[i].object.position);
+            camera.position.copy(intersection[i].object.position).add(new Vector3(camera.position.x, camera.position.y, camera.position.z + 10));
+            camera.updateProjectionMatrix()
+            break
+          }
+        }
+      }
+
+
+    } else if (contextClickFlag) {
+      contextClickFlag = false
+      // return to default camera on right click
+      controls.reset();
+      //camera.position.set(0,0,100)
+      //camera.lookAt(controls.position);
+    }
+
+    controls.update();
+  }
+
+  document.addEventListener('click', onMouseClick) // Left click
+  document.addEventListener('dblclick', onMouseDblClick) // Left, Left, Dbl
+  document.addEventListener('contextmenu', onMouseContext) // Right click
 
   return controls;
+}
+
+function onMouseClick(event) {
+  if (clickFlag) {
+    return event.preventDefault();
+  }
+
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  clickFlag = true
+  console.log('onMouseClick', clickFlag, event, mouse)
+}
+
+function onMouseDblClick(event) {
+  //event.preventDefault();
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+  dblClickFlag = true
+  console.log('onMouseDblClick', dblClickFlag, event, mouse)
+}
+
+function onMouseContext(event) {
+  //event.preventDefault();
+  console.log('onMouseContext', event)
+  contextClickFlag = true
 }
 
 export { createControls };

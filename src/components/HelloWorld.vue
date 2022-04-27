@@ -24,7 +24,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div id="info">{{ msg }}</div>
+  <!-- <div id="info">{{ msg }}</div> -->
   <section id="scene-container"></section>
 </template>
 
