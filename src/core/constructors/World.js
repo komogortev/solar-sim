@@ -12,7 +12,7 @@ import { createControls } from '../systems/controls';
 import { createRenderer } from '../systems/renderer';
 import { Resizer } from '../systems/Resizer';
 import { Loop } from '../systems/Loop';
-import useWorldStore from "../../store/world";
+import useWorldStore from "../../stores/world";
 
 const { solarSystemStore, settings, setTimeSpeed, getPlanetoidInfo } = useWorldStore();
 

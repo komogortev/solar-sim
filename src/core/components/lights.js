@@ -89,7 +89,6 @@ function createHemisphereLight(upColour = 0xFFFF80, downColour = 0x808080) {
   return hemisphereLight;
 }
 
-
 export {
   createDirectionalLight,
   createPointLight,

@@ -16,7 +16,7 @@ import {
 import { AxisGridHelper } from '../../utils/axis-helper'
 import { AppSettings } from '../../globals';
 import { convertRotationPerDayToRadians } from '../../utils/helpers';
-import useWorldStore from "../../store/world";
+import useWorldStore from "../../stores/world";
 
 const {
   solarSystemStore,
