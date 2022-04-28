@@ -61,7 +61,7 @@ function createSolarGroup(guiFolder) {
 }
 
 function decoratePlanetoid(data, parentScale = 0) {
-  const geometry = new SphereBufferGeometry(1, 16, 16);
+  const geometry = new SphereBufferGeometry(1, 36, 36);
   // 1. Adjust mesh material according to planetoid data
   const sphereMaterial = data.emissive
     ? new MeshPhongMaterial({
