@@ -5,7 +5,8 @@ import { loadBirds } from '../components/birds/birds';
 import { loadToonCat } from '../components/animals/toon-cat';
 import { createPerspectiveCamera } from '../components/camera';
 import { createAmbientLight, createPointLight } from '../components/lights';
-import { createSolarGroup } from '../components/solarGroup.js';
+import { createSolarGroup } from './SolarGroup.js';
+import { Golem } from './Golem';
 import { createScene } from '../components/scene';
 
 import { createControls } from '../systems/controls';
@@ -39,6 +40,7 @@ class World {
     scene_ = createScene(renderer_, this.textureLoader);
     loop_ = new Loop(this.camera_, scene_, renderer_);
     container.append(renderer_.domElement);
+
     controls_ = createControls(this.camera_, renderer_.domElement);
     loop_.updatables.push(controls_);
 
@@ -69,6 +71,25 @@ class World {
     console.log(solarGroup_)
     console.log(loop_.updatables)
     scene_.add(solarGroup_);
+
+    this.golem = new Golem();
+    this.golem.mesh.position.set(0, 5.15, 5.15);
+    scene_.add(this.golem.mesh)
+    loop_.updatables.push(this.golem);
+
+  }
+
+  tick(delta) {
+    // test golem request status
+    let isGolemRequested = true;
+
+    if (isGolemRequested) {
+      isGolemRequested = false;
+
+      controls.saveState();
+      controls.target.copy(this.golem.mesh);
+    }
+
   }
 
   render() {
