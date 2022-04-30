@@ -1,6 +1,7 @@
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { FlyControls } from 'three/examples/jsm/controls/FlyControls.js';
 import { Raycaster, Vector2, Vector3 } from 'three'
+import { AppSettings } from '../../globals'
 
 let clickFlag = false
 let dblClickFlag = false
@@ -35,13 +36,13 @@ function createOrbitControls(camera, canvas) {
           if (intersection[i].object && intersection[i].object.name
             && intersection[i].object.name.includes(' MeshGroup')) {
             const meshSurface = intersection[i].object.scale.x
-            const cameraOrbitmultiplier = 2
+            const cameraOrbitOffset = 2
             controls.saveState();
             controls.target.copy(intersection[i].object.position);
 
             camera.lookAt(intersection[i].object.position);
             camera.position.copy(intersection[i].object.position)
-              .add(new Vector3(0, 0, meshSurface * cameraOrbitmultiplier));
+              .add(new Vector3(0, 0, meshSurface * cameraOrbitOffset));
             camera.updateProjectionMatrix()
 
             console.log('touch spotted', intersection[i])
@@ -68,20 +69,19 @@ function createOrbitControls(camera, canvas) {
   return controls;
 }
 
-function createFlyControls(camera, canvas) {
+function createFlyControls(camera, canvas, options = AppSettings.FLY_CONTROLS) {
   const controls = new FlyControls(camera, canvas);
-  controls.lookSpeed = 0.4;
-  controls.movementSpeed = 80;
-  controls.noFly = false;
-  controls.lookVertical = true;
-  controls.constrainVertical = true;
-  controls.verticalMin = 1.0;
-  controls.verticalMax = 2.0;
-  controls.lon = -150;
-  controls.lat = 120;
-
-  controls.dragToLook = true;
-  controls.rollSpeed = 10;
+  controls.lookSpeed = options.lookSpeed;
+  controls.movementSpeed = options.movementSpeed;
+  controls.noFly = options.noFly;
+  controls.lookVertical = options.lookVertical;
+  controls.constrainVertical = options.constrainVertical;
+  controls.verticalMin = options.verticalMin;
+  controls.verticalMax = options.verticalMax;
+  controls.lon = options.lon;
+  controls.lat = options.lat;
+  controls.dragToLook = options.dragToLook;
+  controls.rollSpeed = options.rollSpeed;
 
   // Forward controls.update to our custom .tick method
   controls.tick = (delta, updatables) => {
@@ -94,19 +94,27 @@ function createFlyControls(camera, canvas) {
       const eligibleMeshes = updatables.filter(u => u.type === 'Mesh')
       const intersection = raycaster.intersectObjects(eligibleMeshes);
 
-      if (intersection.length > 0) {
-
+      for (var i = 0; i < intersection.length; i++) {
+        if (intersection[i].object && intersection[i].object.name
+          && intersection[i].object.name.includes(' MeshGroup')) {
+          const meshSurface = intersection[i].object.scale.x
+          console.log(intersection[i]);
+          const cameraOrbitOffset = 2
+          camera.position.copy(intersection[i].object.position)
+            .add(new Vector3(0, 0, meshSurface * cameraOrbitOffset));
+          camera.updateProjectionMatrix()
+          break
+        }
       }
-
     } else if (contextClickFlag) {
       contextClickFlag = false
       // return to default camera on right click
     }
     //controls.update();
   }
-  // document.addEventListener('click', onMouseClick) // Left click
-  // document.addEventListener('dblclick', onMouseDblClick) // Left, Left, Dbl
-  // document.addEventListener('contextmenu', onMouseContext) // Right click
+  document.addEventListener('click', onMouseClick) // Left click
+  document.addEventListener('dblclick', onMouseDblClick) // Left, Left, Dbl
+  document.addEventListener('contextmenu', onMouseContext) // Right click
   return controls;
 }
 

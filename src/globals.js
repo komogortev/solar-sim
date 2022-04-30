@@ -13,6 +13,19 @@ export const AppSettings = Object.freeze({
     near: 0.1, // near clipping plane
     far: 10000 // far clipping plane
   },
+  FLY_CONTROLS: {
+    lookSpeed: 0.4,
+    movementSpeed: 20,
+    noFly: true,
+    lookVertical: true,
+    constrainVertical: true,
+    verticalMin: 1.0,
+    verticalMax: 2.0,
+    lon: -150,
+    lat: 120,
+    dragToLook: true,
+    rollSpeed: 10,
+  },
   AU: {
     km: 150000000,
     mi: 93000000

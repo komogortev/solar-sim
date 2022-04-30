@@ -59,24 +59,24 @@ class World {
     this.initialize_()
   }
 
+  // Scene objects setup
   async initialize_() {
-    // Scene objects setup
+    // Load birds
     // const { parrot, flamingo, stork } = await loadBirds();
     // loop_.updatables.push(parrot, flamingo, stork);
     // scene_.add(parrot, flamingo, stork);
-
+    // Load cat
     // const { toonCat } = await loadToonCat();
     // loop_.updatables.push(toonCat);
     // scene_.add(toonCat);
 
+    // Create Solar System
     const f1 = this.gui.addFolder('SolarSystem')
     solarGroup_ = createSolarGroup(f1);
+    scene_.add(solarGroup_);
     solarGroup_.children.forEach(mesh => {
       loop_.updatables.push(mesh);
     })
-    console.log(solarGroup_)
-    console.log(loop_.updatables)
-    scene_.add(solarGroup_);
 
     // create and position golem
     this.golem = new Golem();
@@ -85,16 +85,20 @@ class World {
     loop_.updatables.push(this.golem);
 
     // assign camera and controls to golem
-
     //controls_.position.copy(this.golem.mesh.position);
-    //this.camera_.position.copy(this.golem.mesh.position);
-    //this.camera_.updateProjectionMatrix();
+
+    this.camera_.position.copy(this.golem.mesh.position);
+    this.camera_.updateProjectionMatrix();
+
+    console.log(solarGroup_)
+    console.log(loop_.updatables)
   }
 
   tick(delta) {
     // test golem request status
     let isGolemRequested = true;
     this.stats.update(delta);
+    controls_.tick(delta, loop_.updatables);
     controls_.update(delta);
 
     if (isGolemRequested) {
