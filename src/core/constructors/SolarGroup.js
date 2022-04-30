@@ -97,6 +97,30 @@ function decoratePlanetoid(data, parentScale = 0) {
   const planetDistanceOffset = parentScale > 0 ? parentScale + sphereMesh.scale.x : 0
   sphereMesh.position.x = (data.distance.AU * distanceMultiplier) + planetDistanceOffset
 
+
+
+  // geometry = new THREE.SphereGeometry(radius, 100, 50);
+
+  // meshPlanet = new THREE.Mesh(geometry, materialNormalMap);
+  // meshPlanet.rotation.y = 0;
+  // meshPlanet.rotation.z = tilt;
+  // scene.add(meshPlanet);
+
+  // // clouds
+
+  // const materialClouds = new THREE.MeshLambertMaterial({
+
+  //   map: textureLoader.load("textures/planets/earth_clouds_1024.png"),
+  //   transparent: true
+
+  // });
+
+  // meshClouds = new THREE.Mesh(geometry, materialClouds);
+  // meshClouds.scale.set(cloudsScale, cloudsScale, cloudsScale);
+  // meshClouds.rotation.z = tilt;
+
+
+
   const radiansPerSecond = convertRotationPerDayToRadians(data.rotation_period.days)
 
   // each frame, animate sphereMesh

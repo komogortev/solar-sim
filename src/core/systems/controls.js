@@ -1,4 +1,5 @@
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { FlyControls } from 'three/examples/jsm/controls/FlyControls.js';
 import { Raycaster, Vector2, Vector3 } from 'three'
 
 let clickFlag = false
@@ -13,7 +14,7 @@ const KEYS = {
   'd': 68,
 };
 
-function createControls(camera, canvas) {
+function createOrbitControls(camera, canvas) {
   const controls = new OrbitControls(camera, canvas);
   controls.enableDamping = true;
 
@@ -64,6 +65,48 @@ function createControls(camera, canvas) {
   document.addEventListener('dblclick', onMouseDblClick) // Left, Left, Dbl
   document.addEventListener('contextmenu', onMouseContext) // Right click
 
+  return controls;
+}
+
+function createFlyControls(camera, canvas) {
+  const controls = new FlyControls(camera, canvas);
+  controls.lookSpeed = 0.4;
+  controls.movementSpeed = 80;
+  controls.noFly = false;
+  controls.lookVertical = true;
+  controls.constrainVertical = true;
+  controls.verticalMin = 1.0;
+  controls.verticalMax = 2.0;
+  controls.lon = -150;
+  controls.lat = 120;
+
+  controls.dragToLook = true;
+  controls.rollSpeed = 10;
+
+  // Forward controls.update to our custom .tick method
+  controls.tick = (delta, updatables) => {
+    // Act on left click
+    if (dblClickFlag) {
+      dblClickFlag = false
+      // find btn mesh connection and switch to its camera
+      raycaster.setFromCamera(mouse, camera);
+      // ! avoid intersectObjects undefined object.layer error for OrbitControls in updatables
+      const eligibleMeshes = updatables.filter(u => u.type === 'Mesh')
+      const intersection = raycaster.intersectObjects(eligibleMeshes);
+
+      if (intersection.length > 0) {
+
+      }
+
+    } else if (contextClickFlag) {
+      contextClickFlag = false
+      // return to default camera on right click
+    }
+    //controls.update();
+  }
+  // document.addEventListener('click', onMouseClick) // Left click
+  // document.addEventListener('dblclick', onMouseDblClick) // Left, Left, Dbl
+  // document.addEventListener('contextmenu', onMouseContext) // Right click
   return controls;
 }
 
@@ -185,4 +228,4 @@ class InputController {
   }
 };
 
-export { createControls };
+export { createOrbitControls, createFlyControls };

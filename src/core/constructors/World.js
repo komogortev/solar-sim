@@ -1,4 +1,6 @@
 import * as THREE from 'three'
+import { FlyControls } from 'three/examples/jsm/controls/FlyControls.js';
+import Stats from 'three/examples/jsm/libs/stats.module.js';
 import GUI from 'lil-gui';
 
 import { loadBirds } from '../components/birds/birds';
@@ -9,7 +11,7 @@ import { createSolarGroup } from './SolarGroup.js';
 import { Golem } from './Golem';
 import { createScene } from '../components/scene';
 
-import { createControls } from '../systems/controls';
+import { createOrbitControls, createFlyControls } from '../systems/controls';
 import { createRenderer } from '../systems/renderer';
 import { Resizer } from '../systems/Resizer';
 import { Loop } from '../systems/Loop';
@@ -24,8 +26,11 @@ let camera_, controls_, renderer_, scene_, loop_,
 class World {
   constructor(container) {
     this.container = container;
+    this.stats = new Stats();
     this.gui = new GUI();
+
     this.timeSpeedSetting = { speed: 1 }
+    container.appendChild(this.stats.dom);
     // Add sliders to number fields by passing min and max
     this.gui.add(this.timeSpeedSetting, 'speed', -100, 100, 1)
       .name('Time speed')
@@ -41,12 +46,13 @@ class World {
     loop_ = new Loop(this.camera_, scene_, renderer_);
     container.append(renderer_.domElement);
 
-    controls_ = createControls(this.camera_, renderer_.domElement);
-    loop_.updatables.push(controls_);
+    controls_ = createFlyControls(this.camera_, renderer_.domElement);
+    //loop_.updatables.push();
+    loop_.updatables.push(this);
 
     const ambLight_ = createAmbientLight(0xffffff, .5);
     const pointLight_ = createPointLight(0xffffff, 100);
-    scene_.add(ambLight_, pointLight_);
+    scene_.add(ambLight_, pointLight_, this.camera_);
 
     // Setup reactive listeners
     const resizer = new Resizer(this.container, this.camera_, renderer_);
@@ -72,24 +78,28 @@ class World {
     console.log(loop_.updatables)
     scene_.add(solarGroup_);
 
+    // create and position golem
     this.golem = new Golem();
-    this.golem.mesh.position.set(0, 5.15, 5.15);
+    this.golem.mesh.position.set(0, 9.15, 9.15);
     scene_.add(this.golem.mesh)
     loop_.updatables.push(this.golem);
 
+    // assign camera and controls to golem
+
+    //controls_.position.copy(this.golem.mesh.position);
+    //this.camera_.position.copy(this.golem.mesh.position);
+    //this.camera_.updateProjectionMatrix();
   }
 
   tick(delta) {
     // test golem request status
     let isGolemRequested = true;
+    this.stats.update(delta);
+    controls_.update(delta);
 
     if (isGolemRequested) {
       isGolemRequested = false;
-
-      controls.saveState();
-      controls.target.copy(this.golem.mesh);
     }
-
   }
 
   render() {
