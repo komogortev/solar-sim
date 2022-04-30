@@ -40,9 +40,9 @@ function createOrbitControls(camera, canvas) {
             controls.saveState();
             controls.target.copy(intersection[i].object.position);
 
-            camera.lookAt(intersection[i].object.position);
             camera.position.copy(intersection[i].object.position)
               .add(new Vector3(0, 0, meshSurface * cameraOrbitOffset));
+            camera.lookAt(intersection[i].object.position);
             camera.updateProjectionMatrix()
 
             console.log('touch spotted', intersection[i])
@@ -98,11 +98,11 @@ function createFlyControls(camera, canvas, options = AppSettings.FLY_CONTROLS) {
         if (intersection[i].object && intersection[i].object.name
           && intersection[i].object.name.includes(' MeshGroup')) {
           const meshSurface = intersection[i].object.scale.x
-          console.log(intersection[i]);
           const cameraOrbitOffset = 2
           camera.position.copy(intersection[i].object.position)
             .add(new Vector3(0, 0, meshSurface * cameraOrbitOffset));
-          camera.updateProjectionMatrix()
+          camera.lookAt(intersection[i].object.position);
+          camera.updateProjectionMatrix();
           break
         }
       }

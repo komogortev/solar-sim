@@ -29,7 +29,7 @@ class World {
     this.stats = new Stats();
     this.gui = new GUI();
 
-    this.timeSpeedSetting = { speed: 1 }
+    this.timeSpeedSetting = { speed: 10 }
     container.appendChild(this.stats.dom);
     // Add sliders to number fields by passing min and max
     this.gui.add(this.timeSpeedSetting, 'speed', -100, 100, 1)
