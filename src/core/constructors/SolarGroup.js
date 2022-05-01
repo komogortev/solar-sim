@@ -33,7 +33,7 @@ const loader = new TextureLoader();
 function createSolarGroup(guiFolder, camera) {
   // A group holds other objects but cannot be seen itself
   const group = new Group();
-  const geometry = new SphereBufferGeometry(1, 200, 200);
+  const geometry = new SphereBufferGeometry(1, 232, 232);
 
   Object.keys(solarSystemStore.value).forEach(key => {
     const starMesh = decoratePlanetoid(geometry, getPlanetoidInfo(key))
@@ -82,9 +82,9 @@ function decoratePlanetoid(geometry, data, parentScale = 0, camera) {
     })
 
   if (data.displacementMap) {
-    sphereMaterial.displacementMap = loader.load(data.bumpMap)
+    sphereMaterial.displacementMap = loader.load(data.displacementMap)
     sphereMaterial.displacementScale = data.displacementScale
-    sphereMaterial.wireframe = true;
+    //sphereMaterial.wireframe = true;
   }
 
   if (data.bumpMap) {
