@@ -14,7 +14,7 @@ export const AppSettings = Object.freeze({
     far: 10000 // far clipping plane
   },
   FLY_CONTROLS: {
-    movementSpeed: 5,
+    movementSpeed: 1,
     dragToLook: true,
     rollSpeed: 1,
   },

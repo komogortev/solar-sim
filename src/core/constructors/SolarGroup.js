@@ -115,7 +115,7 @@ function decoratePlanetoid(geometry, data, parentScale = 0) {
       const x = Radius * Math.cos(-lngRadiants) * Math.sin(latRadiants);
       const y = Radius * Math.sin(lngRadiants) * Math.sin(latRadiants);
       const z = Math.cos(latRadiants);
-      const zOffset = z + 0.2
+      const zOffset = z + 0.2124
       poiMesh.position.set(x, y, zOffset);
       sphereMesh.add(poiMesh);
     });
