@@ -94,34 +94,35 @@ function decoratePlanetoid(geometry, data, parentScale = 0) {
   // Might need to either apply to group or decouple mesh altogether
   const Radius = (data.radius.km * settings.value.size_scaling.multiplier)
   sphereMesh.scale.multiplyScalar(Radius)
-
   sphereMesh.rotation.z = data.tilt
+
   const distanceMultiplier = AppSettings.AU.km / settings.value.distance_scaling.divider
   const planetDistanceOffset = parentScale > 0 ? parentScale + sphereMesh.scale.x : 0
   sphereMesh.position.x = (data.distance.AU * distanceMultiplier) + planetDistanceOffset
 
-
   // Generate POI
   if (data.POI) {
-    let poiMesh = new Mesh(
-      new SphereBufferGeometry(0.05, 10, 10),
-      new MeshBasicMaterial({ color: 0xff0000})
-    );
+    const poiGeometry = new SphereBufferGeometry(0.015, 6, 6);
+    const poiMaterial = new MeshBasicMaterial({ color: 0xff0000 });
 
     data.POI.forEach(poi => {
-      const zOffset = 0.15
+      let poiMesh = new Mesh(poiGeometry, poiMaterial);
+      poiMesh.name = poi.name
+      console.log(poi)
       // divide angle by 180deg and multiplay by Math.PI to get radians
       const latRadiants = poi.lat * Math.PI / 180;
       const lngRadiants = poi.lng * Math.PI / 180;
       const x = Radius * Math.cos(-lngRadiants) * Math.sin(latRadiants);
       const y = Radius * Math.sin(lngRadiants) * Math.sin(latRadiants);
       const z = Math.cos(latRadiants);
-
-
-      poiMesh.position.set(x, y, z + zOffset);
+      const zOffset = z + 0.2
+      poiMesh.position.set(x, y, zOffset);
       sphereMesh.add(poiMesh);
-    })
+    });
   }
+
+  // /!\ radiants = degrees * (2 * Math.PI)
+  const radiansPerSecond = convertRotationPerDayToRadians(data.rotation_period.days)
 
   //Generate athmosphere
   if (data.athmosphereMap) {
@@ -132,19 +133,17 @@ function decoratePlanetoid(geometry, data, parentScale = 0) {
       opacity: 0.45,
     });
     const meshClouds = new Mesh(geometry, materialClouds);
-    meshClouds.name = 'athmosphereMap';
+    meshClouds.name = 'Athmosphere Map';
     meshClouds.scale.set(sphereMesh.scale.x + 0.1, sphereMesh.scale.y + 0.1, sphereMesh.scale.z + 0.1);
     meshClouds.position.set(0,0,0);
     meshClouds.rotation.z = data.tilt;
-    meshClouds.tick = () => {
-      meshClouds.rotation.y += 0.0001
-    }
+    meshClouds.tick = (delta) => {
+      // rotate planetoid in anticlockwise direction (+=)
+      meshClouds.rotation.y += delta * radiansPerSecond * settings.value.timeSpeed;
+    };
     sphereMesh.add(meshClouds);
   }
-
-  // /!\ radiants = degrees * (2 * Math.PI)
-  const radiansPerSecond = convertRotationPerDayToRadians(data.rotation_period.days)
-
+  console.log(sphereMesh)
   // each frame, animate sphereMesh
   sphereMesh.tick = (delta) => {
     // rotate planetoid in anticlockwise direction (+=)

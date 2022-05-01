@@ -73,7 +73,16 @@ const state = reactive({
               name: 'Montreal',
               lat: 45.5017,
               lng: 73.5673,
-
+            },
+            {
+              name: 'Toronto',
+              lat: 43.6532,
+              lng: 79.3832,
+            },
+            {
+              name: 'Chisinau',
+              lat: 47.0105,
+              lng: 28.8638,
             }
           ]
         },
