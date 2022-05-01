@@ -8,6 +8,7 @@ import {
   MeshPhongMaterial,
   MeshBasicMaterial,
   MeshLambertMaterial,
+   MeshNormalMaterial,
   TextureLoader,
   SphereGeometry,
   Color
@@ -124,15 +125,20 @@ function decoratePlanetoid(geometry, data, parentScale = 0) {
 
   //Generate athmosphere
   if (data.athmosphereMap) {
-    geometry = new SphereGeometry(Radius, 50, 50);
-    const materialClouds = new MeshPhongMaterial({
+    geometry = new SphereGeometry(Radius + 0.8, 50, 50);
+    const materialClouds = new MeshBasicMaterial({
       map: loader.load(data.athmosphereMap),
-      transparent: true
+      transparent: true,
+      opacity: 0.45,
     });
     const meshClouds = new Mesh(geometry, materialClouds);
+    meshClouds.name = 'athmosphereMap';
     meshClouds.scale.set(sphereMesh.scale.x + 0.1, sphereMesh.scale.y + 0.1, sphereMesh.scale.z + 0.1);
     meshClouds.position.set(0,0,0);
     meshClouds.rotation.z = data.tilt;
+    meshClouds.tick = () => {
+      meshClouds.rotation.y += 0.0001
+    }
     sphereMesh.add(meshClouds);
   }
 

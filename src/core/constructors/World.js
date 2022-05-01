@@ -76,6 +76,11 @@ class World {
     scene_.add(solarGroup_);
     solarGroup_.children.forEach(mesh => {
       loop_.updatables.push(mesh);
+
+      const aMIdx = mesh.children.findIndex(m => m.name === 'athmosphereMap')
+      if (!!~aMIdx) {
+        loop_.updatables.push(mesh.children[aMIdx])
+      }
     })
 
     // create and position golem
