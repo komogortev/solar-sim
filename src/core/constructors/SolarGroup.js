@@ -29,15 +29,17 @@ const loader = new TextureLoader();
 function createSolarGroup(guiFolder) {
   // A group holds other objects but cannot be seen itself
   const group = new Group();
+  const geometry = new SphereBufferGeometry(1, 36, 36);
 
   Object.keys(solarSystemStore.value).forEach(key => {
-    const starMesh = decoratePlanetoid(getPlanetoidInfo(key))
+    const starMesh = decoratePlanetoid(geometry, getPlanetoidInfo(key))
     group.add(starMesh);
 
     // Create planet meshes
     if (solarSystemStore.value[key].children) {
       Object.keys(solarSystemStore.value[key].children).forEach(childKey => {
         const planetMesh = decoratePlanetoid(
+          geometry,
           getPlanetoidInfo(childKey),
           starMesh.scale.x
         )
@@ -47,6 +49,7 @@ function createSolarGroup(guiFolder) {
         if (solarSystemStore.value[key].children[childKey].children) {
           Object.keys(solarSystemStore.value[key].children[childKey].children).forEach(childKey2 => {
             const moonMesh = decoratePlanetoid(
+              geometry,
               getPlanetoidInfo(childKey2),
               planetMesh.scale.x,
             )
@@ -60,9 +63,8 @@ function createSolarGroup(guiFolder) {
   return group;
 }
 
-function decoratePlanetoid(data, parentScale = 0) {
-  const geometry = new SphereBufferGeometry(1, 36, 36);
-  // 1. Adjust mesh material according to planetoid data
+function decoratePlanetoid(geometry, data, parentScale = 0) {
+  // 1. Create material according to planetoid data
   const sphereMaterial = data.emissive
     ? new MeshPhongMaterial({
       emissive: data.emissive,
@@ -83,44 +85,58 @@ function decoratePlanetoid(data, parentScale = 0) {
     sphereMaterial.specularMap = loader.load(data.specularMap)
     sphereMaterial.shininess = data.shininess
   }
-
+// 1. Create sphere mesh
   const sphereMesh = new Mesh(geometry, sphereMaterial);
   sphereMesh.name = `${data.nameId} MeshGroup`
 
   // Scale mesh by planetoid data factor?
   // Might need to either apply to group or decouple mesh altogether
-  const sizeScale = data.radius.km * settings.value.size_scaling.multiplier
-  sphereMesh.scale.multiplyScalar(sizeScale.toFixed(2))
+  const Radius = (data.radius.km * settings.value.size_scaling.multiplier)
+  sphereMesh.scale.multiplyScalar(Radius)
 
-  //sphereMesh.rotation.z = data.tilt
+  sphereMesh.rotation.z = data.tilt
   const distanceMultiplier = AppSettings.AU.km / settings.value.distance_scaling.divider
   const planetDistanceOffset = parentScale > 0 ? parentScale + sphereMesh.scale.x : 0
   sphereMesh.position.x = (data.distance.AU * distanceMultiplier) + planetDistanceOffset
 
 
+  // Generate POI
+  if (data.POI) {
+    let poiMesh = new Mesh(
+      new SphereBufferGeometry(0.05, 10, 10),
+      new MeshBasicMaterial({ color: 0xff0000})
+    );
 
-  // geometry = new THREE.SphereGeometry(radius, 100, 50);
-
-  // meshPlanet = new THREE.Mesh(geometry, materialNormalMap);
-  // meshPlanet.rotation.y = 0;
-  // meshPlanet.rotation.z = tilt;
-  // scene.add(meshPlanet);
-
-  // // clouds
-
-  // const materialClouds = new THREE.MeshLambertMaterial({
-
-  //   map: textureLoader.load("textures/planets/earth_clouds_1024.png"),
-  //   transparent: true
-
-  // });
-
-  // meshClouds = new THREE.Mesh(geometry, materialClouds);
-  // meshClouds.scale.set(cloudsScale, cloudsScale, cloudsScale);
-  // meshClouds.rotation.z = tilt;
+    data.POI.forEach(poi => {
+      const zOffset = 0.15
+      // divide angle by 180deg and multiplay by Math.PI to get radians
+      const latRadiants = poi.lat * Math.PI / 180;
+      const lngRadiants = poi.lng * Math.PI / 180;
+      const x = Radius * Math.cos(-lngRadiants) * Math.sin(latRadiants);
+      const y = Radius * Math.sin(lngRadiants) * Math.sin(latRadiants);
+      const z = Math.cos(latRadiants);
 
 
+      poiMesh.position.set(x, y, z + zOffset);
+      sphereMesh.add(poiMesh);
+    })
+  }
 
+  //Generate athmosphere
+  if (data.athmosphereMap) {
+    geometry = new SphereGeometry(Radius, 50, 50);
+    const materialClouds = new MeshPhongMaterial({
+      map: loader.load(data.athmosphereMap),
+      transparent: true
+    });
+    const meshClouds = new Mesh(geometry, materialClouds);
+    meshClouds.scale.set(sphereMesh.scale.x + 0.1, sphereMesh.scale.y + 0.1, sphereMesh.scale.z + 0.1);
+    meshClouds.position.set(0,0,0);
+    meshClouds.rotation.z = data.tilt;
+    sphereMesh.add(meshClouds);
+  }
+
+  // /!\ radiants = degrees * (2 * Math.PI)
   const radiansPerSecond = convertRotationPerDayToRadians(data.rotation_period.days)
 
   // each frame, animate sphereMesh

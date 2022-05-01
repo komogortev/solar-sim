@@ -29,7 +29,7 @@ class World {
     this.stats = new Stats();
     this.gui = new GUI();
 
-    this.timeSpeedSetting = { speed: 10 }
+    this.timeSpeedSetting = { speed: 1 }
     container.appendChild(this.stats.dom);
     // Add sliders to number fields by passing min and max
     this.gui.add(this.timeSpeedSetting, 'speed', -100, 100, 1)
@@ -87,7 +87,10 @@ class World {
     // assign camera and controls to golem
     //controls_.position.copy(this.golem.mesh.position);
 
-    this.camera_.position.copy(this.golem.mesh.position);
+    const tmpEarthPositionX = 22.6371
+    this.camera_.position.copy(this.golem.mesh.position)
+      .add(new THREE.Vector3(tmpEarthPositionX, -8, -8));
+    this.camera_.lookAt(tmpEarthPositionX, 0, 0)
     this.camera_.updateProjectionMatrix();
 
     console.log(solarGroup_)

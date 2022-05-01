@@ -7,6 +7,11 @@ import { ref, reactive, computed, toRefs } from "vue";
  * 3. "rotation_period" (or synodic day, or solar day) is the period
  *      for a celestial object to rotate once in relation to the star it is
  *      orbiting, and is the basis of solar time. (full day)
+ * 4. POI - Cartesian coordinates may be retrieved from spherical
+ *      coords (radius, inclination, azimuth)
+ *      x = R cos() sin()
+ *      y = R sin() sin()
+ *      z = R cos()
  */
 const state = reactive({
   solarSystemStore: {
@@ -62,7 +67,15 @@ const state = reactive({
               tilt: 5.145,
               textureMap: 'models/solar-system/textures/2k_moon.jpg',
             }
-          }
+          },
+          POI: [
+            {
+              name: 'Montreal',
+              lat: 45.5017,
+              lng: 73.5673,
+
+            }
+          ]
         },
         'Mars': {
           nameId: 'Mars',
