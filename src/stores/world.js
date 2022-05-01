@@ -51,12 +51,14 @@ const state = reactive({
           orbital_period:  { days: 365 },
           rotation_period: { days: 1 },
           tilt: 0.41,
-          textureMap: 'models/solar-system/textures/earth/2k_earth_daymap.jpg',
+          textureMap: 'models/solar-system/textures/earth/earth_daymap_8k.jpg',
+          displacementMap: 'models/solar-system/textures/earth/elev_bump_8k.jpg',
+          displacementScale: 0.125,
           bumpMap: 'models/solar-system/textures/earth/EarthNormal.png',
-          bumpScale: 0.25,
+          bumpScale: 0.125,
           specularMap: 'models/solar-system/textures/earth/EarthSpec.png',
           shininess: 0.5,
-          athmosphereMap: 'models/solar-system/textures/earth/8k_earth_clouds.jpg',
+          //athmosphereMap: 'models/solar-system/textures/earth/8k_earth_clouds.jpg',
           children: {
             'Moon': {
               nameId: 'Moon',
@@ -65,24 +67,34 @@ const state = reactive({
               orbital_period:  { days: 28 },
               rotation_period: { days: 0 },
               tilt: 5.145,
-              textureMap: 'models/solar-system/textures/2k_moon.jpg',
+              textureMap: 'models/solar-system/textures/earth/moons/moon_2k.jpg',
             }
           },
           POI: [
             {
               name: 'Montreal',
               lat: 45.5017,
-              lng: 73.5673,
+              lng: -73.5673,
             },
             {
               name: 'Toronto',
               lat: 43.6532,
-              lng: 79.3832,
+              lng: -79.3832,
+            },
+            {
+              name: 'Los-Angeles',
+              lat: 34.0522,
+              lng: -118.2437,
             },
             {
               name: 'Chisinau',
               lat: 47.0105,
               lng: 28.8638,
+            },
+            {
+              name: 'Kiev',
+              lat: 50.4501,
+              lng: 30.5234,
             }
           ]
         },

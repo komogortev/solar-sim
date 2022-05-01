@@ -11,13 +11,16 @@ import {
    MeshNormalMaterial,
   TextureLoader,
   SphereGeometry,
-  Color
+  Color,
+  Raycaster
 } from 'three';
 
 import { AxisGridHelper } from '../../utils/axis-helper'
 import { AppSettings } from '../../globals';
-import { convertRotationPerDayToRadians } from '../../utils/helpers';
+import { convertRotationPerDayToRadians, calcPosFromLatLngRad } from '../../utils/helpers';
 import useWorldStore from "../../stores/world";
+
+const raycaster = new Raycaster()
 
 const {
   solarSystemStore,
@@ -27,10 +30,10 @@ const {
 } = useWorldStore();
 const loader = new TextureLoader();
 
-function createSolarGroup(guiFolder) {
+function createSolarGroup(guiFolder, camera) {
   // A group holds other objects but cannot be seen itself
   const group = new Group();
-  const geometry = new SphereBufferGeometry(1, 36, 36);
+  const geometry = new SphereBufferGeometry(1, 200, 200);
 
   Object.keys(solarSystemStore.value).forEach(key => {
     const starMesh = decoratePlanetoid(geometry, getPlanetoidInfo(key))
@@ -42,7 +45,8 @@ function createSolarGroup(guiFolder) {
         const planetMesh = decoratePlanetoid(
           geometry,
           getPlanetoidInfo(childKey),
-          starMesh.scale.x
+          starMesh.scale.x,
+          camera
         )
         group.add(planetMesh);
 
@@ -64,7 +68,7 @@ function createSolarGroup(guiFolder) {
   return group;
 }
 
-function decoratePlanetoid(geometry, data, parentScale = 0) {
+function decoratePlanetoid(geometry, data, parentScale = 0, camera) {
   // 1. Create material according to planetoid data
   const sphereMaterial = data.emissive
     ? new MeshPhongMaterial({
@@ -76,6 +80,12 @@ function decoratePlanetoid(geometry, data, parentScale = 0) {
       color: data.color ? new Color(data.color)  : '#fff',
       map: loader.load(data.textureMap),
     })
+
+  if (data.displacementMap) {
+    sphereMaterial.displacementMap = loader.load(data.bumpMap)
+    sphereMaterial.displacementScale = data.displacementScale
+    sphereMaterial.wireframe = true;
+  }
 
   if (data.bumpMap) {
     sphereMaterial.bumpMap = loader.load(data.bumpMap)
@@ -94,7 +104,7 @@ function decoratePlanetoid(geometry, data, parentScale = 0) {
   // Might need to either apply to group or decouple mesh altogether
   const Radius = (data.radius.km * settings.value.size_scaling.multiplier)
   sphereMesh.scale.multiplyScalar(Radius)
-  sphereMesh.rotation.z = data.tilt
+  //sphereMesh.rotation.z = data.tilt
 
   const distanceMultiplier = AppSettings.AU.km / settings.value.distance_scaling.divider
   const planetDistanceOffset = parentScale > 0 ? parentScale + sphereMesh.scale.x : 0
@@ -107,23 +117,18 @@ function decoratePlanetoid(geometry, data, parentScale = 0) {
 
     data.POI.forEach(poi => {
       let poiMesh = new Mesh(poiGeometry, poiMaterial);
-      poiMesh.name = poi.name
-      console.log(poi)
-      // divide angle by 180deg and multiplay by Math.PI to get radians
-      const latRadiants = poi.lat * Math.PI / 180;
-      const lngRadiants = poi.lng * Math.PI / 180;
-      const x = Radius * Math.cos(-lngRadiants) * Math.sin(latRadiants);
-      const y = Radius * Math.sin(lngRadiants) * Math.sin(latRadiants);
-      const z = Math.cos(latRadiants);
-      const zOffset = z + 0.2124
-      poiMesh.position.set(x, y, zOffset);
+      poiMesh.name = 'POI'
+      poiMesh.title = poi.name
+
+      const cartPos = calcPosFromLatLngRad(Radius, poi.lat, poi.lng)
+      poiMesh.position.set(cartPos.x, cartPos.y, cartPos.z);
+
       sphereMesh.add(poiMesh);
     });
   }
 
   // /!\ radiants = degrees * (2 * Math.PI)
   const radiansPerSecond = convertRotationPerDayToRadians(data.rotation_period.days)
-
   //Generate athmosphere
   if (data.athmosphereMap) {
     geometry = new SphereGeometry(Radius + 0.8, 50, 50);
@@ -143,7 +148,7 @@ function decoratePlanetoid(geometry, data, parentScale = 0) {
     };
     sphereMesh.add(meshClouds);
   }
-  console.log(sphereMesh)
+
   // each frame, animate sphereMesh
   sphereMesh.tick = (delta) => {
     // rotate planetoid in anticlockwise direction (+=)

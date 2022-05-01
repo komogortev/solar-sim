@@ -77,7 +77,7 @@ class World {
     solarGroup_.children.forEach(mesh => {
       loop_.updatables.push(mesh);
 
-      const aMIdx = mesh.children.findIndex(m => m.name === 'athmosphereMap')
+      const aMIdx = mesh.children.findIndex(m => ['athmosphereMap', 'POI'].includes(m.name))
       if (!!~aMIdx) {
         loop_.updatables.push(mesh.children[aMIdx])
       }
