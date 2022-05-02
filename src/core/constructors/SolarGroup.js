@@ -33,7 +33,7 @@ const loader = new TextureLoader();
 function createSolarGroup(guiFolder, camera) {
   // A group holds other objects but cannot be seen itself
   const group = new Group();
-  const geometry = new SphereBufferGeometry(1, 232, 232);
+  const geometry = new SphereBufferGeometry(1, 132, 132);
 
   Object.keys(solarSystemStore.value).forEach(key => {
     const starMesh = decoratePlanetoid(geometry, getPlanetoidInfo(key))
@@ -84,7 +84,7 @@ function decoratePlanetoid(geometry, data, parentScale = 0, camera) {
   if (data.displacementMap) {
     sphereMaterial.displacementMap = loader.load(data.displacementMap)
     sphereMaterial.displacementScale = data.displacementScale
-    //sphereMaterial.wireframe = true;
+    sphereMaterial.wireframe = true;
   }
 
   if (data.bumpMap) {
@@ -96,7 +96,7 @@ function decoratePlanetoid(geometry, data, parentScale = 0, camera) {
     sphereMaterial.specularMap = loader.load(data.specularMap)
     sphereMaterial.shininess = data.shininess
   }
-// 1. Create sphere mesh
+  // 1. Create sphere mesh
   const sphereMesh = new Mesh(geometry, sphereMaterial);
   sphereMesh.name = `${data.nameId} MeshGroup`
 
@@ -107,25 +107,10 @@ function decoratePlanetoid(geometry, data, parentScale = 0, camera) {
   //sphereMesh.rotation.z = data.tilt
 
   const distanceMultiplier = AppSettings.AU.km / settings.value.distance_scaling.divider
-  const planetDistanceOffset = parentScale > 0 ? parentScale + sphereMesh.scale.x : 0
+  const planetDistanceOffset = parentScale > 0
+    ? ((parentScale + sphereMesh.scale.x) / 2) + distanceMultiplier
+    : 0
   sphereMesh.position.x = (data.distance.AU * distanceMultiplier) + planetDistanceOffset
-
-  // Generate POI
-  if (data.POI) {
-    const poiGeometry = new SphereBufferGeometry(0.015, 6, 6);
-    const poiMaterial = new MeshBasicMaterial({ color: 0xff0000 });
-
-    data.POI.forEach(poi => {
-      let poiMesh = new Mesh(poiGeometry, poiMaterial);
-      poiMesh.name = 'POI'
-      poiMesh.title = poi.name
-
-      const cartPos = calcPosFromLatLngRad(Radius, poi.lat, poi.lng)
-      poiMesh.position.set(cartPos.x, cartPos.y, cartPos.z);
-
-      sphereMesh.add(poiMesh);
-    });
-  }
 
   // /!\ radiants = degrees * (2 * Math.PI)
   const radiansPerSecond = convertRotationPerDayToRadians(data.rotation_period.days)
@@ -140,13 +125,30 @@ function decoratePlanetoid(geometry, data, parentScale = 0, camera) {
     const meshClouds = new Mesh(geometry, materialClouds);
     meshClouds.name = 'Athmosphere Map';
     meshClouds.scale.set(sphereMesh.scale.x + 0.1, sphereMesh.scale.y + 0.1, sphereMesh.scale.z + 0.1);
-    meshClouds.position.set(0,0,0);
+    meshClouds.position.set(0, 0, 0);
     meshClouds.rotation.z = data.tilt;
     meshClouds.tick = (delta) => {
       // rotate planetoid in anticlockwise direction (+=)
       meshClouds.rotation.y += delta * radiansPerSecond * settings.value.timeSpeed;
     };
     sphereMesh.add(meshClouds);
+  }
+
+  // Generate POI
+  if (data.POI) {
+    const poiGeometry = new SphereBufferGeometry(0.005, 6, 6);
+    const poiMaterial = new MeshBasicMaterial({ color: 0xff0000 });
+
+    data.POI.forEach(poi => {
+      let poiMesh = new Mesh(poiGeometry, poiMaterial);
+      poiMesh.name = 'POI'
+      poiMesh.title = poi.name
+
+      const cartPos = calcPosFromLatLngRad(poi.lat, poi.lng, Radius + 0.375)
+      poiMesh.position.set(cartPos.x, cartPos.y, cartPos.z);
+
+      sphereMesh.add(poiMesh);
+    });
   }
 
   // each frame, animate sphereMesh

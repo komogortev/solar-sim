@@ -10,7 +10,7 @@ export const AppSettings = Object.freeze({
   CAMERA: {
     position: {x: 0, y: 0, z: 50},
     aspect: window.innerWidth / window.innerHeight, // aspect ratio
-    near: 0.1, // near clipping plane
+    near: 0.05, // near clipping plane
     far: 10000 // far clipping plane
   },
   FLY_CONTROLS: {

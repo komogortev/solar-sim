@@ -73,29 +73,35 @@ class World {
     // Create Solar System
     const f1 = this.gui.addFolder('SolarSystem')
     solarGroup_ = createSolarGroup(f1);
-    scene_.add(solarGroup_);
-    solarGroup_.children.forEach(mesh => {
-      loop_.updatables.push(mesh);
 
-      const aMIdx = mesh.children.findIndex(m => ['athmosphereMap', 'POI'].includes(m.name))
-      if (!!~aMIdx) {
-        loop_.updatables.push(mesh.children[aMIdx])
-      }
+    // Account on just three categories of inheritance: star/planet/moon
+    solarGroup_.children.forEach(mesh => {
+      mesh.children
+        .forEach((m, i) => {
+          // :1 moons/athmospheres/cities
+          if (['athmosphereMap', 'POI'].includes(m.name)) {
+            loop_.updatables.push(m)
+          }
+        })
+      // :2 planets
+      loop_.updatables.push(mesh);
     })
+    // :3 star
+    scene_.add(solarGroup_);
 
     // create and position golem
     this.golem = new Golem();
-    this.golem.mesh.position.set(0, 9.15, 9.15);
+    const earthRef = solarGroup_.children.find(c => c.name === 'Earth MeshGroup')
+    this.golem.mesh.position.set(earthRef.position.x, 2.15, 2.15);
     scene_.add(this.golem.mesh)
     loop_.updatables.push(this.golem);
 
     // assign camera and controls to golem
     //controls_.position.copy(this.golem.mesh.position);
 
-    const tmpEarthPositionX = 22.6371
     this.camera_.position.copy(this.golem.mesh.position)
-      .add(new THREE.Vector3(tmpEarthPositionX, -8, -8));
-    this.camera_.lookAt(tmpEarthPositionX, 0, 0)
+        .add(new THREE.Vector3(earthRef.position.x, -8, -8));
+    this.camera_.lookAt(earthRef.position.x, 0, 0)
     this.camera_.updateProjectionMatrix();
 
     console.log(solarGroup_)

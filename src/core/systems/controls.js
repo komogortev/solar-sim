@@ -7,6 +7,8 @@ let clickFlag = false
 let dblClickFlag = false
 let contextClickFlag = false
 const mouse = new Vector2(1, 1)
+const raycaster = new Raycaster()
+
 const KEYS = {
   'a': 65,
   's': 83,
@@ -84,31 +86,31 @@ function createFlyControls(camera, canvas, options = AppSettings.FLY_CONTROLS) {
 
   // Forward controls.update to our custom .tick method
   controls.tick = (delta, updatables) => {
-    // // Act on left click
-    // if (dblClickFlag) {
-    //   dblClickFlag = false
-    //   // find btn mesh connection and switch to its camera
-    //   raycaster.setFromCamera(mouse, camera);
-    //   // ! avoid intersectObjects undefined object.layer error for OrbitControls in updatables
-    //   const eligibleMeshes = updatables.filter(u => u.type === 'Mesh')
-    //   const intersection = raycaster.intersectObjects(eligibleMeshes);
+    // Act on left click
+    if (dblClickFlag) {
+      dblClickFlag = false
+      // find btn mesh connection and switch to its camera
+      raycaster.setFromCamera(mouse, camera);
+      // ! avoid intersectObjects undefined object.layer error for OrbitControls in updatables
+      const eligibleMeshes = updatables.filter(u => u.type === 'Mesh')
+      const intersection = raycaster.intersectObjects(eligibleMeshes);
 
-    //   for (var i = 0; i < intersection.length; i++) {
-    //     if (intersection[i].object && intersection[i].object.name
-    //       && intersection[i].object.name.includes(' MeshGroup')) {
-    //       const meshSurface = intersection[i].object.scale.x
-    //       const cameraOrbitOffset = 2
-    //       camera.position.copy(intersection[i].object.position)
-    //         .add(new Vector3(0, 0, meshSurface * cameraOrbitOffset));
-    //       camera.lookAt(intersection[i].object.position);
-    //       camera.updateProjectionMatrix();
-    //       break
-    //     }
-    //   }
-    // } else if (contextClickFlag) {
-    //   contextClickFlag = false
-    //   // return to default camera on right click
-    // }
+      for (var i = 0; i < intersection.length; i++) {
+        if (intersection[i].object && intersection[i].object.name
+          && intersection[i].object.name.includes(' MeshGroup')) {
+          const meshSurface = intersection[i].object.scale.x
+          const cameraOrbitOffset = 2
+          camera.position.copy(intersection[i].object.position)
+            .add(new Vector3(0, 0, meshSurface * cameraOrbitOffset));
+          camera.lookAt(intersection[i].object.position);
+          camera.updateProjectionMatrix();
+          break
+        }
+      }
+    } else if (contextClickFlag) {
+      contextClickFlag = false
+      // return to default camera on right click
+    }
     //controls.update();
   }
   document.addEventListener('click', onMouseClick) // Left click
@@ -133,31 +135,31 @@ function createFpsControls(camera, canvas, options = AppSettings.FLY_CONTROLS) {
 
   // Forward controls.update to our custom .tick method
   controls.tick = (delta, updatables) => {
-    // // Act on left click
-    // if (dblClickFlag) {
-    //   dblClickFlag = false
-    //   // find btn mesh connection and switch to its camera
-    //   raycaster.setFromCamera(mouse, camera);
-    //   // ! avoid intersectObjects undefined object.layer error for OrbitControls in updatables
-    //   const eligibleMeshes = updatables.filter(u => u.type === 'Mesh')
-    //   const intersection = raycaster.intersectObjects(eligibleMeshes);
+    // Act on left click
+    if (dblClickFlag) {
+      dblClickFlag = false
+      // find btn mesh connection and switch to its camera
+      raycaster.setFromCamera(mouse, camera);
+      // ! avoid intersectObjects undefined object.layer error for OrbitControls in updatables
+      const eligibleMeshes = updatables.filter(u => u.type === 'Mesh')
+      const intersection = raycaster.intersectObjects(eligibleMeshes);
 
-    //   for (var i = 0; i < intersection.length; i++) {
-    //     if (intersection[i].object && intersection[i].object.name
-    //       && intersection[i].object.name.includes(' MeshGroup')) {
-    //       const meshSurface = intersection[i].object.scale.x
-    //       const cameraOrbitOffset = 2
-    //       camera.position.copy(intersection[i].object.position)
-    //         .add(new Vector3(0, 0, meshSurface * cameraOrbitOffset));
-    //       camera.lookAt(intersection[i].object.position);
-    //       camera.updateProjectionMatrix();
-    //       break
-    //     }
-    //   }
-    // } else if (contextClickFlag) {
-    //   contextClickFlag = false
-    //   // return to default camera on right click
-    // }
+      for (var i = 0; i < intersection.length; i++) {
+        if (intersection[i].object && intersection[i].object.name
+          && intersection[i].object.name.includes(' MeshGroup')) {
+          const meshSurface = intersection[i].object.scale.x
+          const cameraOrbitOffset = 2
+          camera.position.copy(intersection[i].object.position)
+            .add(new Vector3(0, 0, meshSurface * cameraOrbitOffset));
+          camera.lookAt(intersection[i].object.position);
+          camera.updateProjectionMatrix();
+          break
+        }
+      }
+    } else if (contextClickFlag) {
+      contextClickFlag = false
+      // return to default camera on right click
+    }
     //controls.update();
   }
   document.addEventListener('click', onMouseClick) // Left click

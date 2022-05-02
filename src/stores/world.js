@@ -54,7 +54,7 @@ const state = reactive({
           textureMap: 'models/solar-system/textures/earth/earth_daymap_8k.jpg',
           displacementMap: 'models/solar-system/textures/earth/earth_bump_8k.jpg',
           displacementScale: 0.05,
-          bumpMap: 'models/solar-system/textures/earth/earth_bump_16k.jpg',
+          bumpMap: 'models/solar-system/textures/earth/EarthNormal.png',
           bumpScale: 0.125,
           specularMap: 'models/solar-system/textures/earth/EarthSpec.png',
           shininess: 0.5,
