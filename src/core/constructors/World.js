@@ -16,12 +16,13 @@ import { createRenderer } from '../systems/renderer';
 import { Resizer } from '../systems/Resizer';
 import { Loop } from '../systems/Loop';
 import useWorldStore from "../../stores/world";
+import { toHandlers } from 'vue';
 
 const { solarSystemStore, settings, setTimeSpeed, getPlanetoidInfo } = useWorldStore();
 
 let camera_, controls_, renderer_, scene_, loop_,
   gltfLoader, raycaster, mouse,
-  clickFlag, contextClickFlag, solarGroup_
+  clickFlag, contextClickFlag, solarGroup_, tp_options, tp_control
 
 class World {
   constructor(container) {
@@ -71,8 +72,38 @@ class World {
     // scene_.add(toonCat);
 
     // Create Solar System
+
     const f1 = this.gui.addFolder('SolarSystem')
     solarGroup_ = createSolarGroup(f1);
+    tp_options = solarGroup_.children.map(m => m.name)
+    tp_options.unshift("Free Float")
+    tp_control = { 'TP points': "Free Float"}
+    f1.add(tp_control, 'TP points', tp_options)
+      .onChange((v) => {
+        // default cam position
+        let newPos = {
+          p: [0, 0, 50],
+          s: [0, 0, 0]
+        }
+
+        if (v !== "Free Float") {
+          const mesh = solarGroup_.children.find(m => m.name === v)
+          newPos = {
+            p: [
+              mesh.position.x,
+              mesh.position.y,
+              mesh.position.z,
+            ],
+            s: mesh.scale.z
+          }
+          console.log(newPos)
+        }
+
+        this.camera_.position.set(newPos.p[0], newPos.p[1], newPos.p[2] + newPos.s * 2.5)
+        this.camera_.lookAt(newPos.p[0], newPos.p[1], newPos.p[2])
+        this.camera_.updateProjectionMatrix()
+      });
+    f1.open()
 
     // Account on just three categories of inheritance: star/planet/moon
     solarGroup_.children.forEach(mesh => {
