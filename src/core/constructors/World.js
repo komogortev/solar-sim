@@ -63,13 +63,18 @@ class World {
   // Scene objects setup
   async initialize_() {
     // Load birds
-    // const { parrot, flamingo, stork } = await loadBirds();
-    // loop_.updatables.push(parrot, flamingo, stork);
-    // scene_.add(parrot, flamingo, stork);
+    {
+      // const { parrot, flamingo, stork } = await loadBirds();
+      // loop_.updatables.push(parrot, flamingo, stork);
+      // scene_.add(parrot, flamingo, stork);
+    }
+
     // Load cat
-    // const { toonCat } = await loadToonCat();
-    // loop_.updatables.push(toonCat);
-    // scene_.add(toonCat);
+    {
+      // const { toonCat } = await loadToonCat();
+      // loop_.updatables.push(toonCat);
+      // scene_.add(toonCat);
+    }
 
     // Create Solar System
     solarGroup_ = createSolarGroup();
@@ -104,13 +109,15 @@ class World {
     this.camera_.updateProjectionMatrix();
 
     // Log init results
-    console.groupCollapsed('%c Solar System Meshes', 'color: teal');
-      decorateLog('Solar Group:', '', solarGroup_)
-    console.groupEnd('Solar System Meshes');
+    {
+      console.groupCollapsed('%c Solar System Meshes', 'color: teal');
+        decorateLog('Solar Group:', '', solarGroup_)
+      console.groupEnd('Solar System Meshes');
 
-    console.groupCollapsed('%c Loop Updatables', 'color: teal');
-      decorateLog('Updatable Objects:', '', loop_.updatables)
-    console.groupEnd('Updatables');
+      console.groupCollapsed('%c Loop Updatables', 'color: teal');
+        decorateLog('Updatable Objects:', '', loop_.updatables)
+      console.groupEnd('Updatables');
+    }
   }
 
   _initTpActionGui() {
@@ -130,6 +137,7 @@ class World {
         decorateLog('TP >', tpMesh ? tpMesh.name : 'Free Float', newPos)
       });
   }
+
   tick(delta) {
     // test golem request status
     let isGolemRequested = true;

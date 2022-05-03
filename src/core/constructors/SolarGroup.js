@@ -12,7 +12,8 @@ import {
   TextureLoader,
   SphereGeometry,
   Color,
-  Raycaster
+  Raycaster,
+  EllipseCurve
 } from 'three';
 
 import { AxisGridHelper } from '../../utils/axis-helper'
@@ -84,7 +85,7 @@ function decoratePlanetoid(geometry, data, parentScale = 0, camera) {
   if (data.displacementMap) {
     sphereMaterial.displacementMap = loader.load(data.displacementMap)
     sphereMaterial.displacementScale = data.displacementScale
-    sphereMaterial.wireframe = true;
+    // sphereMaterial.wireframe = true;
   }
 
   if (data.bumpMap) {
@@ -99,40 +100,40 @@ function decoratePlanetoid(geometry, data, parentScale = 0, camera) {
   // 1. Create sphere mesh
   const sphereMesh = new Mesh(geometry, sphereMaterial);
   sphereMesh.name = `${data.nameId} MeshGroup`
-
   // Scale mesh by planetoid data factor?
   // Might need to either apply to group or decouple mesh altogether
-  const Radius = (data.radius.km * settings.value.size_scaling.multiplier)
-  sphereMesh.scale.multiplyScalar(Radius)
-  //sphereMesh.rotation.z = data.tilt
+  sphereMesh.scale.multiplyScalar(data.radius.km * settings.value.size_scaling.multiplier)
+  // sphereMesh.rotation.z = data.tilt
 
   const planetDistanceOffset = parentScale > 0
     ? ((parentScale + sphereMesh.scale.x) * 2)
     : 0
   const distanceInKm = data.distance.AU * AppSettings.AU.km
-
   sphereMesh.position.x = (distanceInKm + planetDistanceOffset) / settings.value.distance_scaling.divider
 
   // /!\ radiants = degrees * (2 * Math.PI)
   const radiansPerSecond = convertRotationPerDayToRadians(data.rotation_period.days)
+
   //Generate athmosphere
   if (data.athmosphereMap) {
-    geometry = new SphereGeometry(Radius + 0.8, 50, 50);
     const materialClouds = new MeshBasicMaterial({
       map: loader.load(data.athmosphereMap),
       transparent: true,
-      opacity: 0.45,
+      opacity: data.athmosphereOpacity,
     });
-    const meshClouds = new Mesh(geometry, materialClouds);
-    meshClouds.name = 'Athmosphere Map';
-    meshClouds.scale.set(sphereMesh.scale.x + 0.1, sphereMesh.scale.y + 0.1, sphereMesh.scale.z + 0.1);
-    meshClouds.position.set(0, 0, 0);
-    meshClouds.rotation.z = data.tilt;
-    meshClouds.tick = (delta) => {
+    const athmosphereMesh = new Mesh(geometry, materialClouds);
+    athmosphereMesh.name = 'Athmosphere Map';
+    //athmosphereMesh.scale.set(sphereMesh.scale.x + 0.1, sphereMesh.scale.y + 0.1, sphereMesh.scale.z + 0.1);
+    athmosphereMesh.scale.multiplyScalar(
+      sphereMesh.scale.x + data.athmosphereDepth
+    );
+    athmosphereMesh.position.set(0, 0, 0);
+    athmosphereMesh.rotation.z = data.tilt;
+    athmosphereMesh.tick = (delta) => {
       // rotate planetoid in anticlockwise direction (+=)
-      meshClouds.rotation.y += delta * radiansPerSecond * settings.value.timeSpeed;
+      athmosphereMesh.rotation.y += delta * radiansPerSecond * settings.value.timeSpeed;
     };
-    sphereMesh.add(meshClouds);
+    sphereMesh.add(athmosphereMesh);
   }
 
   // Generate POI
@@ -145,7 +146,11 @@ function decoratePlanetoid(geometry, data, parentScale = 0, camera) {
       poiMesh.name = 'POI'
       poiMesh.title = poi.name
 
-      const cartPos = calcPosFromLatLngRad(poi.lat, poi.lng, Radius + 0.375)
+      const cartPos = calcPosFromLatLngRad(
+        poi.lat,
+        poi.lng,
+        (data.radius.km * settings.value.size_scaling.multiplier) + 0.375
+      );
       poiMesh.position.set(cartPos.x, cartPos.y, cartPos.z);
 
       sphereMesh.add(poiMesh);
@@ -160,5 +165,8 @@ function decoratePlanetoid(geometry, data, parentScale = 0, camera) {
 
   return sphereMesh;
 }
+
+const curve = new EllipseCurve()
+
 
 export { createSolarGroup };

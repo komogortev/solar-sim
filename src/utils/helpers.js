@@ -25,7 +25,6 @@ export function convertRotationPerDayToRadians(rotation_period) {
  * @returns
  */
 export function calcPosFromLatLngRad(lat, lng, radius) {
-
   // divide angle by 180deg and multiplay by Math.PI to get radians
   const phi = (92-lat) * (Math.PI / 180);
   const theta = (lng + 180) * (Math.PI / 180);
@@ -38,10 +37,9 @@ export function calcPosFromLatLngRad(lat, lng, radius) {
 }
 
 /**
- *
- * @param {*} lat
- * @param {*} lng
- * @returns
+ * Get mesh position and scale
+ * @param {Object} mesh
+ * @returns {Object} target position and scale
  */
 export function getTargetPositionScale(mesh = null) {
   if (!mesh) {
@@ -64,6 +62,12 @@ export function getTargetPositionScale(mesh = null) {
   return newPos;
 }
 
+/**
+ * Colorize the console log parts for better visibility
+ * @param {String} label
+ * @param {String} msg
+ * @param {Object|Array|String} rest
+ */
 export function decorateLog(label = 'empty label', msg = '', rest = '') {
   console.log(
     `%c ${label} %c${msg}`,
