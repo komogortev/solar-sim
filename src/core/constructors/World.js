@@ -91,27 +91,25 @@ class World {
 
     // Initiate and position the Golem (choose default planetoid name)
     this.golem = new Golem(this.camera_);
-    const initPlanetoidName = 'Earth'
-    const initPlanetoid = solarGroup_.children.find(c => c.name.includes(initPlanetoidName))
-    this.camera_.position.copy(initPlanetoid.position)
-      .add(new THREE.Vector3(0, 0, initPlanetoid.scale.z + 1));
-    //this.camera_.add(this.golem.mesh)
-    scene_.add(this.golem.mesh)
+    scene_.add(this.golem.mesh);
     loop_.updatables.push(this.golem);
 
     // Assign camera and controls to golem
     // controls_.position.copy(initPlanetoid.position); // OrbitControls
-    // this.camera_.position.copy(initPlanetoid.position)
-    //   .add(new THREE.Vector3(0, 0.2, this.golem.mesh.scale.z - 0.8));
+    const initPlanetoidName = 'Earth'
+    const initPlanetoid = solarGroup_.children.find(c => c.name.includes(initPlanetoidName))
+    this.camera_.position.copy(initPlanetoid.position)
+      .add(new THREE.Vector3(0, 0, initPlanetoid.scale.z + 1));
     this.camera_.lookAt(initPlanetoid.position.x, initPlanetoid.position.y, initPlanetoid.position.z)
     this.camera_.updateProjectionMatrix();
 
+    // Log init results
     console.groupCollapsed('%c Solar System Meshes', 'color: teal');
-    decorateLog('Solar Group:', '', solarGroup_)
+      decorateLog('Solar Group:', '', solarGroup_)
     console.groupEnd('Solar System Meshes');
 
     console.groupCollapsed('%c Loop Updatables', 'color: teal');
-    decorateLog('Updatable Objects:', '', loop_.updatables)
+      decorateLog('Updatable Objects:', '', loop_.updatables)
     console.groupEnd('Updatables');
   }
 
