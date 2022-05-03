@@ -158,8 +158,6 @@ function decoratePlanetoid(geometry, data, parentScale = 0, camera) {
     sphereMesh.rotation.y += delta * radiansPerSecond * settings.value.timeSpeed;
   };
 
-  console.log(sphereMesh.name, 'distance =', sphereMesh.position.x, ', scale =', sphereMesh.scale.x)
-
   return sphereMesh;
 }
 

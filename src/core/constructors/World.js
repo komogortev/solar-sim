@@ -16,7 +16,7 @@ import { createRenderer } from '../systems/renderer';
 import { Resizer } from '../systems/Resizer';
 import { Loop } from '../systems/Loop';
 import useWorldStore from "../../stores/world";
-import { toHandlers } from 'vue';
+import { getTargetPositionScale, decorateLog } from '../../utils/helpers';
 
 const { solarSystemStore, settings, setTimeSpeed, getPlanetoidInfo } = useWorldStore();
 
@@ -74,36 +74,6 @@ class World {
     // Create Solar System
     const f1 = this.gui.addFolder('SolarSystem')
     solarGroup_ = createSolarGroup(f1);
-    tp_options = solarGroup_.children.map(m => m.name)
-    tp_options.unshift("Free Float")
-    tp_control = { 'TP points': "Free Float"}
-    f1.add(tp_control, 'TP points', tp_options)
-      .onChange((v) => {
-        // default cam position
-        let newPos = {
-          p: [0, 0, 50],
-          s: [0, 0, 0]
-        }
-
-        if (v !== "Free Float") {
-          const mesh = solarGroup_.children.find(m => m.name === v)
-          newPos = {
-            p: [
-              mesh.position.x,
-              mesh.position.y,
-              mesh.position.z,
-            ],
-            s: mesh.scale.z
-          }
-          console.log(newPos)
-        }
-
-        this.camera_.position.set(newPos.p[0], newPos.p[1], newPos.p[2] + newPos.s * 2.5)
-        this.camera_.lookAt(newPos.p[0], newPos.p[1], newPos.p[2])
-        this.camera_.updateProjectionMatrix()
-      });
-    f1.open()
-
     // Account on just three categories of inheritance: star/planet/moon
     solarGroup_.children.forEach(mesh => {
       mesh.children
@@ -118,11 +88,16 @@ class World {
     })
     // :3 star
     scene_.add(solarGroup_);
+    f1.close()
 
     // create and position golem
     this.golem = new Golem();
     const earthRef = solarGroup_.children.find(c => c.name === 'Earth MeshGroup')
-    this.golem.mesh.position.set(earthRef.position.x, 2.15, 2.15);
+    this.golem.mesh.position.set(
+      earthRef.position.x,
+      earthRef.position.y,
+      earthRef.position.z + earthRef.scale.z + 1
+    );
     scene_.add(this.golem.mesh)
     loop_.updatables.push(this.golem);
 
@@ -131,13 +106,35 @@ class World {
 
     this.camera_.position.copy(this.golem.mesh.position)
         .add(new THREE.Vector3(earthRef.position.x, -8, -8));
-    this.camera_.lookAt(earthRef.position.x, 0, 0)
+    this.camera_.lookAt(earthRef.position.x, earthRef.position.y, earthRef.position.z)
     this.camera_.updateProjectionMatrix();
 
+    console.groupCollapsed('Solar system meshes');
     console.log(solarGroup_)
     console.log(loop_.updatables)
+    console.groupEnd('Solar system meshes');
+
+
+    this.initTpActionGui()
   }
 
+  initTpActionGui() {
+    tp_options = solarGroup_.children.map(m => m.name)
+    tp_options.unshift("Free Float")
+    tp_control = { 'TP points': "Free Float" }
+    this.gui.add(tp_control, 'TP points', tp_options)
+      .onChange((v) => {
+        let tpMesh = v !== "Free Float"
+          ? solarGroup_.children.find(m => m.name === v)
+          : null
+        const newPos = getTargetPositionScale(tpMesh)
+
+        this.camera_.position.set(newPos.p[0], newPos.p[1], newPos.p[2] + newPos.s * 2.5)
+        this.camera_.lookAt(newPos.p[0], newPos.p[1], newPos.p[2])
+        this.camera_.updateProjectionMatrix()
+        decorateLog('TP >', tpMesh ? tpMesh.name : 'Free Float', newPos)
+      });
+  }
   tick(delta) {
     // test golem request status
     let isGolemRequested = true;

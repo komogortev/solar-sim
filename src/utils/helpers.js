@@ -36,3 +36,39 @@ export function calcPosFromLatLngRad(lat, lng, radius) {
 
   return { x, y, z };
 }
+
+/**
+ *
+ * @param {*} lat
+ * @param {*} lng
+ * @returns
+ */
+export function getTargetPositionScale(mesh = null) {
+  if (!mesh) {
+    //default values set to center of Scene
+    return {
+      p: [0, 0, 0],
+      s: 7
+    }
+  }
+
+  const newPos = {
+    p: [
+      mesh.position.x,
+      mesh.position.y,
+      mesh.position.z,
+    ],
+    s: mesh.scale.z
+  }
+
+  return newPos;
+}
+
+export function decorateLog(label = 'empty label', msg = '', rest = '') {
+  console.log(
+    `%c${label} %c${msg}`,
+    'color: white; background: teal; padding: calc(0.2em + 1px) 0.25em',
+    'color: teal; border: 1px solid teal;padding: 0.2em 0.25em',
+    rest
+  )
+}
