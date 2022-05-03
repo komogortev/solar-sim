@@ -76,7 +76,7 @@ const state = reactive({
           shininess: 0.5,
           athmosphereMap: 'models/solar-system/textures/earth/8k_earth_clouds.jpg',
           athmosphereOpacity: 0.5,
-          athmosphereDepth: 0.4,
+          athmosphereDepth: 0.425,
           children: {
             'Moon': {
               nameId: 'Moon',
