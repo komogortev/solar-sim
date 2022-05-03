@@ -74,6 +74,7 @@ class World {
     // Create Solar System
     const f1 = this.gui.addFolder('SolarSystem')
     solarGroup_ = createSolarGroup(f1);
+    this._initTpActionGui()
     // Account on just three categories of inheritance: star/planet/moon
     solarGroup_.children.forEach(mesh => {
       mesh.children
@@ -109,16 +110,16 @@ class World {
     this.camera_.lookAt(earthRef.position.x, earthRef.position.y, earthRef.position.z)
     this.camera_.updateProjectionMatrix();
 
-    console.groupCollapsed('Solar system meshes');
-    console.log(solarGroup_)
-    console.log(loop_.updatables)
-    console.groupEnd('Solar system meshes');
+    console.groupCollapsed('%c Solar System Meshes', 'color: teal');
+    decorateLog('Solar Group:', '', solarGroup_)
+    console.groupEnd('Solar System Meshes');
 
-
-    this.initTpActionGui()
+    console.groupCollapsed('%c Loop Updatables', 'color: teal');
+    decorateLog('Updatable Objects:', '', loop_.updatables)
+    console.groupEnd('Updatables');
   }
 
-  initTpActionGui() {
+  _initTpActionGui() {
     tp_options = solarGroup_.children.map(m => m.name)
     tp_options.unshift("Free Float")
     tp_control = { 'TP points': "Free Float" }

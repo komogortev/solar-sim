@@ -66,7 +66,7 @@ export function getTargetPositionScale(mesh = null) {
 
 export function decorateLog(label = 'empty label', msg = '', rest = '') {
   console.log(
-    `%c${label} %c${msg}`,
+    `%c ${label} %c${msg}`,
     'color: white; background: teal; padding: calc(0.2em + 1px) 0.25em',
     'color: teal; border: 1px solid teal;padding: 0.2em 0.25em',
     rest
