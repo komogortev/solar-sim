@@ -63,7 +63,7 @@ const state = reactive({
             'Moon': {
               nameId: 'Moon',
               radius:   { km: 1737.4 },
-              distance: { AU: 0.0026, km: 385000 },
+              distance: { AU: 0.00257 * 8, km: 385000 }, //0.00257, 385000
               orbital_period:  { days: 28 },
               rotation_period: { days: 0 },
               tilt: 5.145,
@@ -288,7 +288,7 @@ const state = reactive({
       multiplier: 0.0001
     },
     distance_scaling: {
-      divider: 10000000
+      divider: 1000000
     },
   },
 });

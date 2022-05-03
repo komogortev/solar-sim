@@ -72,7 +72,6 @@ class World {
     // scene_.add(toonCat);
 
     // Create Solar System
-
     const f1 = this.gui.addFolder('SolarSystem')
     solarGroup_ = createSolarGroup(f1);
     tp_options = solarGroup_.children.map(m => m.name)

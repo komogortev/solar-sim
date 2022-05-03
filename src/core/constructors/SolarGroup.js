@@ -106,11 +106,12 @@ function decoratePlanetoid(geometry, data, parentScale = 0, camera) {
   sphereMesh.scale.multiplyScalar(Radius)
   //sphereMesh.rotation.z = data.tilt
 
-  const distanceMultiplier = AppSettings.AU.km / settings.value.distance_scaling.divider
   const planetDistanceOffset = parentScale > 0
-    ? ((parentScale + sphereMesh.scale.x) / 2) + distanceMultiplier
+    ? ((parentScale + sphereMesh.scale.x) * 2)
     : 0
-  sphereMesh.position.x = (data.distance.AU * distanceMultiplier) + planetDistanceOffset
+  const distanceInKm = data.distance.AU * AppSettings.AU.km
+
+  sphereMesh.position.x = (distanceInKm + planetDistanceOffset) / settings.value.distance_scaling.divider
 
   // /!\ radiants = degrees * (2 * Math.PI)
   const radiansPerSecond = convertRotationPerDayToRadians(data.rotation_period.days)

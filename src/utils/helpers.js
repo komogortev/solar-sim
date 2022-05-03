@@ -27,7 +27,7 @@ export function convertRotationPerDayToRadians(rotation_period) {
 export function calcPosFromLatLngRad(lat, lng, radius) {
 
   // divide angle by 180deg and multiplay by Math.PI to get radians
-  const phi = (90-lat) * (Math.PI / 180);
+  const phi = (92-lat) * (Math.PI / 180);
   const theta = (lng + 180) * (Math.PI / 180);
 
   const x = -((radius) * Math.sin(phi) * Math.cos(theta));
