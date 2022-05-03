@@ -4,7 +4,8 @@ import {
   Mesh,
   Object3D,
   CameraHelper,
-  Raycaster
+  Raycaster,
+  Vector3
 } from 'three'
 
 const raycaster = new Raycaster()
@@ -12,9 +13,9 @@ const raycaster = new Raycaster()
 
 class Golem {
   constructor(camera, renderer) {
-    this.radius = 0.25
-    this.widthSegments = 5
-    this.heightSegments = 5
+    this.radius = 0.05
+    this.widthSegments = 6
+    this.heightSegments = 6
     this.camera_ = camera
     this.golemGeometry = new SphereGeometry(
       this.radius, this.widthSegments, this.heightSegments
@@ -33,6 +34,10 @@ class Golem {
 
   tick(delta) {
     this.golemMesh.rotation.x += 0.001
+
+    // TP golem to new cam position
+    this.golemMesh.position.copy(this.camera_.position)
+      .add(new Vector3(0, -0.15, -0.25))
 
     // center of mass
     // sphereMesh.position

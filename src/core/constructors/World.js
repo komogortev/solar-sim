@@ -72,8 +72,7 @@ class World {
     // scene_.add(toonCat);
 
     // Create Solar System
-    const f1 = this.gui.addFolder('SolarSystem')
-    solarGroup_ = createSolarGroup(f1);
+    solarGroup_ = createSolarGroup();
     this._initTpActionGui()
     // Account on just three categories of inheritance: star/planet/moon
     solarGroup_.children.forEach(mesh => {
@@ -89,25 +88,22 @@ class World {
     })
     // :3 star
     scene_.add(solarGroup_);
-    f1.close()
 
-    // create and position golem
-    this.golem = new Golem();
-    const earthRef = solarGroup_.children.find(c => c.name === 'Earth MeshGroup')
-    this.golem.mesh.position.set(
-      earthRef.position.x,
-      earthRef.position.y,
-      earthRef.position.z + earthRef.scale.z + 1
-    );
+    // Initiate and position the Golem (choose default planetoid name)
+    this.golem = new Golem(this.camera_);
+    const initPlanetoidName = 'Earth'
+    const initPlanetoid = solarGroup_.children.find(c => c.name.includes(initPlanetoidName))
+    this.camera_.position.copy(initPlanetoid.position)
+      .add(new THREE.Vector3(0, 0, initPlanetoid.scale.z + 1));
+    //this.camera_.add(this.golem.mesh)
     scene_.add(this.golem.mesh)
     loop_.updatables.push(this.golem);
 
-    // assign camera and controls to golem
-    //controls_.position.copy(this.golem.mesh.position);
-
-    this.camera_.position.copy(this.golem.mesh.position)
-        .add(new THREE.Vector3(earthRef.position.x, -8, -8));
-    this.camera_.lookAt(earthRef.position.x, earthRef.position.y, earthRef.position.z)
+    // Assign camera and controls to golem
+    // controls_.position.copy(initPlanetoid.position); // OrbitControls
+    // this.camera_.position.copy(initPlanetoid.position)
+    //   .add(new THREE.Vector3(0, 0.2, this.golem.mesh.scale.z - 0.8));
+    this.camera_.lookAt(initPlanetoid.position.x, initPlanetoid.position.y, initPlanetoid.position.z)
     this.camera_.updateProjectionMatrix();
 
     console.groupCollapsed('%c Solar System Meshes', 'color: teal');

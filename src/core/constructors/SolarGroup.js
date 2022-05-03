@@ -30,7 +30,7 @@ const {
 } = useWorldStore();
 const loader = new TextureLoader();
 
-function createSolarGroup(guiFolder, camera) {
+function createSolarGroup(camera) {
   // A group holds other objects but cannot be seen itself
   const group = new Group();
   const geometry = new SphereBufferGeometry(1, 132, 132);
