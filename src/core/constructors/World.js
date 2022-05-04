@@ -11,7 +11,7 @@ import { createSolarGroup } from './SolarGroup.js';
 import { Golem } from './Golem';
 import { createScene } from '../components/scene';
 
-import { createOrbitControls, createFlyControls, createFpsControls } from '../systems/controls';
+import { createOrbitControls, createFlyControls, createFpsControls, createPointerLockControls } from '../systems/controls';
 import { createRenderer } from '../systems/renderer';
 import { Resizer } from '../systems/Resizer';
 import { Loop } from '../systems/Loop';
@@ -47,7 +47,7 @@ class World {
     loop_ = new Loop(this.camera_, scene_, renderer_);
     container.append(renderer_.domElement);
 
-    controls_ = createFpsControls(this.camera_, renderer_.domElement);
+    controls_ = createPointerLockControls(this.camera_, renderer_.domElement);
     // loop_.updatables.push();
     loop_.updatables.push(this);
 
@@ -104,7 +104,7 @@ class World {
     const initPlanetoidName = 'Earth'
     const initPlanetoid = solarGroup_.children.find(c => c.name.includes(initPlanetoidName))
     this.camera_.position.copy(initPlanetoid.position)
-      .add(new THREE.Vector3(0, 0, initPlanetoid.scale.z + 1));
+      .add(new THREE.Vector3(0, 0, initPlanetoid.scale.z + 0.01));
     this.camera_.lookAt(initPlanetoid.position.x, initPlanetoid.position.y, initPlanetoid.position.z)
     this.camera_.updateProjectionMatrix();
 
@@ -141,9 +141,11 @@ class World {
   tick(delta) {
     // test golem request status
     let isGolemRequested = true;
+
     this.stats.update(delta);
+
     controls_.tick(delta, loop_.updatables);
-    controls_.update(delta);
+    //controls_.update(delta);
 
     if (isGolemRequested) {
       isGolemRequested = false;

@@ -23,6 +23,11 @@ export const AppSettings = Object.freeze({
     lookSpeed: 0.005,
 
   },
+  PLOCK_CONTROLS: {
+    movementSpeed: 0.5,
+    lookSpeed: 0.005,
+    cameraLayer: 1,
+  },
   AU: {
     km: 150000000,
     mi: 93000000

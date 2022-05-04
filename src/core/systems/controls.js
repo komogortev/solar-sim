@@ -1,6 +1,7 @@
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { FlyControls } from 'three/examples/jsm/controls/FlyControls.js';
 import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls';
+import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls';
 import { Raycaster, Vector2, Vector3 } from 'three'
 import { AppSettings } from '../../globals'
 
@@ -33,12 +34,16 @@ function createOrbitControls(camera, canvas) {
       const intersection = raycaster.intersectObjects(eligibleMeshes);
 
       if (intersection.length > 0) {
+
         // find celestial object that has name
         for (var i = 0; i < intersection.length; i++) {
+
           if (intersection[i].object && intersection[i].object.name
             && intersection[i].object.name.includes(' MeshGroup')) {
-            const meshSurface = intersection[i].object.scale.x
+
+              const meshSurface = intersection[i].object.scale.x
             const cameraOrbitOffset = 2
+
             controls.saveState();
             controls.target.copy(intersection[i].object.position);
 
@@ -50,7 +55,9 @@ function createOrbitControls(camera, canvas) {
             console.log('touch spotted', intersection[i])
             break
           }
+
         }
+
       }
 
     } else if (contextClickFlag) {
@@ -162,46 +169,193 @@ function createFpsControls(camera, canvas, options = AppSettings.FPS_CONTROLS) {
   document.addEventListener('contextmenu', onMouseContext) // Right click
   return controls;
 }
+
 function createPointerLockControls(camera, canvas, options = AppSettings.FLY_CONTROLS) {
-  const controls = new FirstPersonControls(camera, canvas);
-  controls.movementSpeed = options.movementSpeed;
-  controls.activeLook = true; // def true
-  controls.autoForward = false; // def false
-  //controls.lookSpeed = options.lookSpeed;
+  const blocker = document.getElementById('blocker');
+  const instructions = document.getElementById('instructions');
+  const raycaster_ = new Raycaster(new Vector3(), new Vector3(0, - 1, 0), 0, 10);
+
+  const controls = new PointerLockControls(camera, canvas);
+  controls.isLocked === true
+
+  let moveForward = false;
+  let moveBackward = false;
+  let moveLeft = false;
+  let moveRight = false;
+  let canJump = false;
+
+  const velocity = new Vector3();
+  const direction = new Vector3();
+  const vertex = new Vector3();
+  //const color = new Color();
+
+  const onKeyDown = function (event) {
+
+    switch (event.code) {
+
+      case 'ArrowUp':
+      case 'KeyW':
+        moveForward = true;
+        break;
+
+      case 'ArrowLeft':
+      case 'KeyA':
+        moveLeft = true;
+        break;
+
+      case 'ArrowDown':
+      case 'KeyS':
+        moveBackward = true;
+        break;
+
+      case 'ArrowRight':
+      case 'KeyD':
+        moveRight = true;
+        break;
+
+      case 'Space':
+        if (canJump === true) velocity.y += 350;
+        canJump = false;
+        break;
+
+    }
+
+  };
+
+  const onKeyUp = function (event) {
+
+    switch (event.code) {
+
+      case 'ArrowUp':
+      case 'KeyW':
+        moveForward = false;
+        break;
+
+      case 'ArrowLeft':
+      case 'KeyA':
+        moveLeft = false;
+        break;
+
+      case 'ArrowDown':
+      case 'KeyS':
+        moveBackward = false;
+        break;
+
+      case 'ArrowRight':
+      case 'KeyD':
+        moveRight = false;
+        break;
+
+    }
+
+  };
+
+  document.addEventListener('keydown', onKeyDown);
+  document.addEventListener('keyup', onKeyUp);
+
+  instructions.addEventListener('click', function () {
+    console.log('click')
+    controls.lock();
+
+  });
+
+  controls.addEventListener('lock', function () {
+
+    instructions.style.display = 'none';
+    blocker.style.display = 'none';
+
+  });
+
+  controls.addEventListener('unlock', function () {
+
+    blocker.style.display = 'block';
+    instructions.style.display = '';
+
+  });
 
   // Forward controls.update to our custom .tick method
   controls.tick = (delta, updatables) => {
     // Act on left click
-    if (dblClickFlag) {
-      dblClickFlag = false
-      // find btn mesh connection and switch to its camera
-      raycaster.setFromCamera(mouse, camera);
-      // ! avoid intersectObjects undefined object.layer error for OrbitControls in updatables
-      const eligibleMeshes = updatables.filter(u => u.type === 'Mesh')
-      const intersection = raycaster.intersectObjects(eligibleMeshes);
+    // if (dblClickFlag) {
+    //   dblClickFlag = false
+    //   // find btn mesh connection and switch to its camera
+    //   raycaster_.setFromCamera(mouse, camera);
+    //   // ! avoid intersectObjects undefined object.layer error for OrbitControls in updatables
+    //   const eligibleMeshes = updatables.filter(u => u.type === 'Mesh')
+    //   const intersection = raycaster_.intersectObjects(eligibleMeshes);
 
-      for (var i = 0; i < intersection.length; i++) {
-        if (intersection[i].object && intersection[i].object.name
-          && intersection[i].object.name.includes(' MeshGroup')) {
-          const meshSurface = intersection[i].object.scale.x
-          const cameraOrbitOffset = 2
-          camera.position.copy(intersection[i].object.position)
-            .add(new Vector3(0, 0, meshSurface * cameraOrbitOffset));
-          camera.lookAt(intersection[i].object.position);
-          camera.updateProjectionMatrix();
-          break
-        }
+    //   for (var i = 0; i < intersection.length; i++) {
+    //     if (intersection[i].object && intersection[i].object.name
+    //       && intersection[i].object.name.includes(' MeshGroup')) {
+    //       const meshSurface = intersection[i].object.scale.x
+    //       const cameraOrbitOffset = 2
+    //       camera.position.copy(intersection[i].object.position)
+    //         .add(new Vector3(0, 0, meshSurface * cameraOrbitOffset));
+    //       camera.lookAt(intersection[i].object.position);
+    //       camera.updateProjectionMatrix();
+    //       break
+    //     }
+    //   }
+    // } else if (contextClickFlag) {
+    //   contextClickFlag = false
+    //   // return to default camera on right click
+    // }
+
+    if (controls.isLocked === true) {
+
+      raycaster_.ray.origin.copy(controls.getObject().position);
+      //raycaster_.layers
+      raycaster_.ray.origin.y -= 10;
+
+      const eligibleMeshes = updatables.filter(u => u.type === 'Mesh')
+      //const intersection = raycaster.intersectObjects(eligibleMeshes);
+
+      const intersections = raycaster_.intersectObjects(eligibleMeshes);
+      const onObject = intersections.length > 0;
+
+      //const delta = (time - prevTime) / 1000;
+
+      velocity.x -= velocity.x * 10.0 * delta;
+      velocity.z -= velocity.z * 10.0 * delta;
+
+      velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
+
+      direction.z = Number(moveForward) - Number(moveBackward);
+      direction.x = Number(moveRight) - Number(moveLeft);
+      direction.normalize(); // this ensures consistent movements in all directions
+
+      if (moveForward || moveBackward) velocity.z -= direction.z * 400.0 * delta;
+      if (moveLeft || moveRight) velocity.x -= direction.x * 400.0 * delta;
+
+      if (onObject === true) {
+
+        velocity.y = Math.max(0, velocity.y);
+        canJump = true;
+
       }
-    } else if (contextClickFlag) {
-      contextClickFlag = false
-      // return to default camera on right click
+
+      controls.moveRight(- velocity.x * delta);
+      controls.moveForward(- velocity.z * delta);
+
+      controls.getObject().position.y += (velocity.y * delta); // new behavior
+
+      if (controls.getObject().position.y < 10) {
+
+        velocity.y = 0;
+        controls.getObject().position.y = 10;
+
+        canJump = true;
+
+      }
+
     }
 
-    controls.update(controls.movementSpeed);
   }
+
   document.addEventListener('click', onMouseClick) // Left click
   document.addEventListener('dblclick', onMouseDblClick) // Left, Left, Dbl
   document.addEventListener('contextmenu', onMouseContext) // Right click
+
   return controls;
 }
 
@@ -323,4 +477,4 @@ class InputController {
   }
 };
 
-export { createOrbitControls, createFlyControls, createFpsControls };
+export { createOrbitControls, createFlyControls, createFpsControls, createPointerLockControls };

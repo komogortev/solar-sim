@@ -100,6 +100,7 @@ function decoratePlanetoid(geometry, data, parentScale = 0, camera) {
   // 1. Create sphere mesh
   const sphereMesh = new Mesh(geometry, sphereMaterial);
   sphereMesh.name = `${data.nameId} MeshGroup`
+  sphereMesh.layers.set(AppSettings.PLOCK_CONTROLS.cameraLayer)
   // Scale mesh by planetoid data factor?
   // Might need to either apply to group or decouple mesh altogether
   sphereMesh.scale.multiplyScalar(data.radius.km * settings.value.size_scaling.multiplier)

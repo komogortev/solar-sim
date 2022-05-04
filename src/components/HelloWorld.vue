@@ -25,6 +25,18 @@ onMounted(() => {
 
 <template>
   <!-- <div id="info">{{ msg }}</div> -->
+  <div id="blocker">
+    <div id="instructions">
+      <p style="font-size:36px">
+        Click to play
+      </p>
+      <p>
+        Move: WASD<br/>
+        Jump: SPACE<br/>
+        Look: MOUSE
+      </p>
+    </div>
+  </div>
   <section id="scene-container"></section>
 </template>
 
@@ -48,5 +60,25 @@ onMounted(() => {
     background to prevent flashing on load
   */
   /* background-color: skyblue; */
+}
+#blocker {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255,255,255,0.5);
+}
+
+#instructions {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+  font-size: 14px;
+  cursor: pointer;
 }
 </style>
