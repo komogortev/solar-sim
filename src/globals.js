@@ -19,7 +19,7 @@ export const AppSettings = Object.freeze({
     rollSpeed: 1,
   },
   FPS_CONTROLS: {
-    movementSpeed: 1,
+    movementSpeed: 0.5,
     lookSpeed: 0.005,
 
   },

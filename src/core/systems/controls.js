@@ -120,7 +120,49 @@ function createFlyControls(camera, canvas, options = AppSettings.FLY_CONTROLS) {
   return controls;
 }
 
-function createFpsControls(camera, canvas, options = AppSettings.FLY_CONTROLS) {
+function createFpsControls(camera, canvas, options = AppSettings.FPS_CONTROLS) {
+  const controls = new FirstPersonControls(camera, canvas);
+  controls.movementSpeed = options.movementSpeed;
+  controls.activeLook = true; // def true
+  controls.autoForward = false; // def false
+  //controls.lookSpeed = options.lookSpeed;
+
+  // Forward controls.update to our custom .tick method
+  controls.tick = (delta, updatables) => {
+    // Act on left click
+    if (dblClickFlag) {
+      dblClickFlag = false
+      // find btn mesh connection and switch to its camera
+      raycaster.setFromCamera(mouse, camera);
+      // ! avoid intersectObjects undefined object.layer error for OrbitControls in updatables
+      const eligibleMeshes = updatables.filter(u => u.type === 'Mesh')
+      const intersection = raycaster.intersectObjects(eligibleMeshes);
+
+      for (var i = 0; i < intersection.length; i++) {
+        if (intersection[i].object && intersection[i].object.name
+          && intersection[i].object.name.includes(' MeshGroup')) {
+          const meshSurface = intersection[i].object.scale.x
+          const cameraOrbitOffset = 2
+          camera.position.copy(intersection[i].object.position)
+            .add(new Vector3(0, 0, meshSurface * cameraOrbitOffset));
+          camera.lookAt(intersection[i].object.position);
+          camera.updateProjectionMatrix();
+          break
+        }
+      }
+    } else if (contextClickFlag) {
+      contextClickFlag = false
+      // return to default camera on right click
+    }
+
+    controls.update(controls.movementSpeed);
+  }
+  document.addEventListener('click', onMouseClick) // Left click
+  document.addEventListener('dblclick', onMouseDblClick) // Left, Left, Dbl
+  document.addEventListener('contextmenu', onMouseContext) // Right click
+  return controls;
+}
+function createPointerLockControls(camera, canvas, options = AppSettings.FLY_CONTROLS) {
   const controls = new FirstPersonControls(camera, canvas);
   controls.movementSpeed = options.movementSpeed;
   controls.activeLook = true; // def true
