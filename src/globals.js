@@ -18,6 +18,11 @@ export const AppSettings = Object.freeze({
     dragToLook: true,
     rollSpeed: 1,
   },
+  FPS_CONTROLS: {
+    movementSpeed: 1,
+    lookSpeed: 0.005,
+
+  },
   AU: {
     km: 150000000,
     mi: 93000000

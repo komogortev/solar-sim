@@ -11,7 +11,7 @@ import { createSolarGroup } from './SolarGroup.js';
 import { Golem } from './Golem';
 import { createScene } from '../components/scene';
 
-import { createOrbitControls, createFlyControls } from '../systems/controls';
+import { createOrbitControls, createFlyControls, createFpsControls } from '../systems/controls';
 import { createRenderer } from '../systems/renderer';
 import { Resizer } from '../systems/Resizer';
 import { Loop } from '../systems/Loop';
@@ -47,8 +47,8 @@ class World {
     loop_ = new Loop(this.camera_, scene_, renderer_);
     container.append(renderer_.domElement);
 
-    controls_ = createFlyControls(this.camera_, renderer_.domElement);
-    //loop_.updatables.push();
+    controls_ = createFpsControls(this.camera_, renderer_.domElement);
+    // loop_.updatables.push();
     loop_.updatables.push(this);
 
     const ambLight_ = createAmbientLight(0xffffff, .5);

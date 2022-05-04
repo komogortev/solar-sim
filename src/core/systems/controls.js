@@ -1,5 +1,6 @@
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { FlyControls } from 'three/examples/jsm/controls/FlyControls.js';
+import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls';
 import { Raycaster, Vector2, Vector3 } from 'three'
 import { AppSettings } from '../../globals'
 
@@ -120,18 +121,11 @@ function createFlyControls(camera, canvas, options = AppSettings.FLY_CONTROLS) {
 }
 
 function createFpsControls(camera, canvas, options = AppSettings.FLY_CONTROLS) {
-  const controls = new FlyControls(camera, canvas);
-  controls.lookSpeed = options.lookSpeed;
+  const controls = new FirstPersonControls(camera, canvas);
   controls.movementSpeed = options.movementSpeed;
-  controls.noFly = options.noFly;
-  controls.lookVertical = options.lookVertical;
-  controls.constrainVertical = options.constrainVertical;
-  controls.verticalMin = options.verticalMin;
-  controls.verticalMax = options.verticalMax;
-  controls.lon = options.lon;
-  controls.lat = options.lat;
-  controls.dragToLook = options.dragToLook;
-  controls.rollSpeed = options.rollSpeed;
+  controls.activeLook = true; // def true
+  controls.autoForward = false; // def false
+  //controls.lookSpeed = options.lookSpeed;
 
   // Forward controls.update to our custom .tick method
   controls.tick = (delta, updatables) => {
@@ -160,7 +154,8 @@ function createFpsControls(camera, canvas, options = AppSettings.FLY_CONTROLS) {
       contextClickFlag = false
       // return to default camera on right click
     }
-    //controls.update();
+
+    controls.update(controls.movementSpeed);
   }
   document.addEventListener('click', onMouseClick) // Left click
   document.addEventListener('dblclick', onMouseDblClick) // Left, Left, Dbl
@@ -286,4 +281,4 @@ class InputController {
   }
 };
 
-export { createOrbitControls, createFlyControls };
+export { createOrbitControls, createFlyControls, createFpsControls };
