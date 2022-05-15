@@ -103,10 +103,9 @@ class World {
     scene_.add(solarGroup_);
 
     // Initiate and position the Golem (choose default planetoid name)
-    this.golem = new Golem(this.camera_);
-
-    scene_.add(this.golem.mesh);
-    loop_.updatables.push(this.golem);
+    //this.golem = new Golem(this.camera_);
+    //scene_.add(this.golem.mesh);
+    //loop_.updatables.push(this.golem);
 
     // Assign camera and controls to golem
     // controls_.position.copy(initPlanetoid.position); // OrbitControls

@@ -3,7 +3,9 @@ import { AppSettings } from '../../globals'
 
 function createScene(renderer_, textureLoader) {
   const scene = new Scene();
+
   scene.fog = new FogExp2(0x000000, 0.00000025);
+
   const texture = textureLoader.load(
     AppSettings.BG_MAP,
     () => {
@@ -11,7 +13,9 @@ function createScene(renderer_, textureLoader) {
       rt.fromEquirectangularTexture(renderer_, texture);
       scene.background = rt.texture;
     })
+
   // scene.background = new Color('skyblue');
+
   return scene;
 }
 

@@ -256,7 +256,6 @@ function createPointerLockControls(camera, canvas, options = AppSettings.FLY_CON
   instructions.addEventListener('click', function () {
     console.log('click')
     controls.lock();
-
   });
 
   controls.addEventListener('lock', function () {
@@ -301,54 +300,54 @@ function createPointerLockControls(camera, canvas, options = AppSettings.FLY_CON
     //   // return to default camera on right click
     // }
 
-    if (controls.isLocked === true) {
+    // if (controls.isLocked === true) {
 
-      raycaster_.ray.origin.copy(controls.getObject().position);
-      //raycaster_.layers
-      raycaster_.ray.origin.y -= 10;
+    //   raycaster_.ray.origin.copy(controls.getObject().position);
+    //   //raycaster_.layers
+    //   raycaster_.ray.origin.y -= 10;
 
-      const eligibleMeshes = updatables.filter(u => u.type === 'Mesh')
-      //const intersection = raycaster.intersectObjects(eligibleMeshes);
+    //   const eligibleMeshes = updatables.filter(u => u.type === 'Mesh')
+    //   //const intersection = raycaster.intersectObjects(eligibleMeshes);
 
-      const intersections = raycaster_.intersectObjects(eligibleMeshes);
-      const onObject = intersections.length > 0;
+    //   const intersections = raycaster_.intersectObjects(eligibleMeshes);
+    //   const onObject = intersections.length > 0;
 
-      //const delta = (time - prevTime) / 1000;
+    //   //const delta = (time - prevTime) / 1000;
 
-      velocity.x -= velocity.x * 10.0 * delta;
-      velocity.z -= velocity.z * 10.0 * delta;
+    //   velocity.x -= velocity.x * 10.0 * delta;
+    //   velocity.z -= velocity.z * 10.0 * delta;
 
-      velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
+    //   velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
 
-      direction.z = Number(moveForward) - Number(moveBackward);
-      direction.x = Number(moveRight) - Number(moveLeft);
-      direction.normalize(); // this ensures consistent movements in all directions
+    //   direction.z = Number(moveForward) - Number(moveBackward);
+    //   direction.x = Number(moveRight) - Number(moveLeft);
+    //   direction.normalize(); // this ensures consistent movements in all directions
 
-      if (moveForward || moveBackward) velocity.z -= direction.z * 400.0 * delta;
-      if (moveLeft || moveRight) velocity.x -= direction.x * 400.0 * delta;
+    //   if (moveForward || moveBackward) velocity.z -= direction.z * 400.0 * delta;
+    //   if (moveLeft || moveRight) velocity.x -= direction.x * 400.0 * delta;
 
-      if (onObject === true) {
+    //   if (onObject === true) {
 
-        velocity.y = Math.max(0, velocity.y);
-        canJump = true;
+    //     velocity.y = Math.max(0, velocity.y);
+    //     canJump = true;
 
-      }
+    //   }
 
-      controls.moveRight(- velocity.x * delta);
-      controls.moveForward(- velocity.z * delta);
+    //   controls.moveRight(- velocity.x * delta);
+    //   controls.moveForward(- velocity.z * delta);
 
-      controls.getObject().position.y += (velocity.y * delta); // new behavior
+    //   controls.getObject().position.y += (velocity.y * delta); // new behavior
 
-      if (controls.getObject().position.y < 10) {
+    //   if (controls.getObject().position.y < 10) {
 
-        velocity.y = 0;
-        controls.getObject().position.y = 10;
+    //     velocity.y = 0;
+    //     controls.getObject().position.y = 10;
 
-        canJump = true;
+    //     canJump = true;
 
-      }
+    //   }
 
-    }
+    // }
 
   }
 
@@ -384,97 +383,97 @@ function onMouseContext(event) {
   console.debug('onMouseContext', event)
 }
 
-class InputController {
-  constructor(target) {
-    this.target_ = target || document;
-    this.initialize_();
-  }
+// class InputController {
+//   constructor(target) {
+//     this.target_ = target || document;
+//     this.initialize_();
+//   }
 
-  initialize_() {
-    this.current_ = {
-      leftButton: false,
-      rightButton: false,
-      mouseXDelta: 0,
-      mouseYDelta: 0,
-      mouseX: 0,
-      mouseY: 0,
-    };
-    this.previous_ = null;
-    this.keys_ = {};
-    this.previousKeys_ = {};
-    this.target_.addEventListener('mousedown', (e) => this.onMouseDown_(e), false);
-    this.target_.addEventListener('mousemove', (e) => this.onMouseMove_(e), false);
-    this.target_.addEventListener('mouseup', (e) => this.onMouseUp_(e), false);
-    this.target_.addEventListener('keydown', (e) => this.onKeyDown_(e), false);
-    this.target_.addEventListener('keyup', (e) => this.onKeyUp_(e), false);
-  }
+//   initialize_() {
+//     this.current_ = {
+//       leftButton: false,
+//       rightButton: false,
+//       mouseXDelta: 0,
+//       mouseYDelta: 0,
+//       mouseX: 0,
+//       mouseY: 0,
+//     };
+//     this.previous_ = null;
+//     this.keys_ = {};
+//     this.previousKeys_ = {};
+//     this.target_.addEventListener('mousedown', (e) => this.onMouseDown_(e), false);
+//     this.target_.addEventListener('mousemove', (e) => this.onMouseMove_(e), false);
+//     this.target_.addEventListener('mouseup', (e) => this.onMouseUp_(e), false);
+//     this.target_.addEventListener('keydown', (e) => this.onKeyDown_(e), false);
+//     this.target_.addEventListener('keyup', (e) => this.onKeyUp_(e), false);
+//   }
 
-  onMouseMove_(e) {
-    this.current_.mouseX = e.pageX - window.innerWidth / 2;
-    this.current_.mouseY = e.pageY - window.innerHeight / 2;
+//   onMouseMove_(e) {
+//     this.current_.mouseX = e.pageX - window.innerWidth / 2;
+//     this.current_.mouseY = e.pageY - window.innerHeight / 2;
 
-    if (this.previous_ === null) {
-      this.previous_ = { ...this.current_ };
-    }
+//     if (this.previous_ === null) {
+//       this.previous_ = { ...this.current_ };
+//     }
 
-    this.current_.mouseXDelta = this.current_.mouseX - this.previous_.mouseX;
-    this.current_.mouseYDelta = this.current_.mouseY - this.previous_.mouseY;
-  }
+//     this.current_.mouseXDelta = this.current_.mouseX - this.previous_.mouseX;
+//     this.current_.mouseYDelta = this.current_.mouseY - this.previous_.mouseY;
+//   }
 
-  onMouseDown_(e) {
-    this.onMouseMove_(e);
+//   onMouseDown_(e) {
+//     this.onMouseMove_(e);
 
-    switch (e.button) {
-      case 0: {
-        this.current_.leftButton = true;
-        break;
-      }
-      case 2: {
-        this.current_.rightButton = true;
-        break;
-      }
-    }
-  }
+//     switch (e.button) {
+//       case 0: {
+//         this.current_.leftButton = true;
+//         break;
+//       }
+//       case 2: {
+//         this.current_.rightButton = true;
+//         break;
+//       }
+//     }
+//   }
 
-  onMouseUp_(e) {
-    this.onMouseMove_(e);
+//   onMouseUp_(e) {
+//     this.onMouseMove_(e);
 
-    switch (e.button) {
-      case 0: {
-        this.current_.leftButton = false;
-        break;
-      }
-      case 2: {
-        this.current_.rightButton = false;
-        break;
-      }
-    }
-  }
+//     switch (e.button) {
+//       case 0: {
+//         this.current_.leftButton = false;
+//         break;
+//       }
+//       case 2: {
+//         this.current_.rightButton = false;
+//         break;
+//       }
+//     }
+//   }
 
-  onKeyDown_(e) {
-    this.keys_[e.keyCode] = true;
-  }
+//   onKeyDown_(e) {
+//     this.keys_[e.keyCode] = true;
+//   }
 
-  onKeyUp_(e) {
-    this.keys_[e.keyCode] = false;
-  }
+//   onKeyUp_(e) {
+//     this.keys_[e.keyCode] = false;
+//   }
 
-  key(keyCode) {
-    return !!this.keys_[keyCode];
-  }
+//   key(keyCode) {
+//     return !!this.keys_[keyCode];
+//   }
 
-  isReady() {
-    return this.previous_ !== null;
-  }
+//   isReady() {
+//     return this.previous_ !== null;
+//   }
 
-  update(_) {
-    if (this.previous_ !== null) {
-      this.current_.mouseXDelta = this.current_.mouseX - this.previous_.mouseX;
-      this.current_.mouseYDelta = this.current_.mouseY - this.previous_.mouseY;
+//   update(_) {
+//     if (this.previous_ !== null) {
+//       this.current_.mouseXDelta = this.current_.mouseX - this.previous_.mouseX;
+//       this.current_.mouseYDelta = this.current_.mouseY - this.previous_.mouseY;
 
-      this.previous_ = { ...this.current_ };
-    }
-  }
-};
+//       this.previous_ = { ...this.current_ };
+//     }
+//   }
+// };
 
 export { createOrbitControls, createFlyControls, createFpsControls, createPointerLockControls };
