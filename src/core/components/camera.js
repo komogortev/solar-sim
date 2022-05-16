@@ -19,7 +19,7 @@ function createPerspectiveCamera(fov = 75, name = 'perspective camera') {
 
 class ConstructCameraRig {
   constructor(fov = 75, name = 'perspective camera Rig') {
-    this.rig = new Group();
+    this._rig = new Group();
 
     this._camera = createPerspectiveCamera(
       fov, // fov = Field Of View
@@ -36,16 +36,21 @@ class ConstructCameraRig {
   }
 
   tick (delta) {
-    //ensure rig is facing floor
+
+    // rotate the rig to face the floor
     this.rig.lookAt(initPlanetoid.position.x, initPlanetoid.position.y, initPlanetoid.position.z)
 
     // ensure rig is on the floor
-    this.rig.position.copy(initPlanetoid.position)
-      .add(new THREE.Vector3(0, 0, initPlanetoid.scale.z + 0.01));
+    //this.rig.position.copy(initPlanetoid.position)
+      //.add(new THREE.Vector3(0, 0, initPlanetoid.scale.z + 0.01));
   }
 
   get name() {
     return this._name;
+  }
+
+  get rig() {
+    return this._rig;
   }
 
   get camera() {
