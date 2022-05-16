@@ -5,7 +5,7 @@ import GUI from 'lil-gui';
 
 import { loadBirds } from '../components/birds/birds';
 import { loadToonCat } from '../components/animals/toon-cat';
-import { createPerspectiveCamera } from '../components/camera';
+import { ConstructCameraRig } from '../components/camera';
 import { createAmbientLight, createPointLight } from '../components/lights';
 import { createSolarGroup } from './SolarGroup.js';
 import { Golem } from './Golem';
@@ -20,7 +20,7 @@ import { getTargetPositionScale, decorateLog } from '../../utils/helpers';
 
 const { solarSystemStore, settings, setTimeSpeed, getPlanetoidInfo } = useWorldStore();
 
-let camera_, controls_, renderer_, scene_, loop_,
+let cameraRig_, controls_, renderer_, scene_, loop_,
   gltfLoader, raycaster, mouse,
   clickFlag, contextClickFlag, solarGroup_, tp_options, tp_control
 
@@ -42,22 +42,25 @@ class World {
     this.textureLoader = new THREE.TextureLoader();
 
     // World scene tools
-    this.camera_ = createPerspectiveCamera();
-    renderer_ = createRenderer();
-    scene_ = createScene(renderer_, this.textureLoader);
-    loop_ = new Loop(this.camera_, scene_, renderer_);
+    cameraRig_ = new ConstructCameraRig();
 
+    renderer_ = createRenderer();
     container.append(renderer_.domElement);
 
-    controls_ = createPointerLockControls(this.camera_, renderer_.domElement);
+    scene_ = createScene(renderer_, this.textureLoader);
+
+    loop_ = new Loop(cameraRig_.camera, scene_, renderer_);
+
+
+    controls_ = createPointerLockControls(cameraRig_.camera, renderer_.domElement);
     loop_.updatables.push(this);
 
     const ambLight_ = createAmbientLight(0xffffff, .5);
     const pointLight_ = createPointLight(0xffffff, 100);
-    scene_.add(ambLight_, pointLight_, this.camera_);
+    scene_.add(ambLight_, pointLight_, cameraRig_.rig);
 
     // Setup reactive listeners
-    const resizer = new Resizer(this.container, this.camera_, renderer_);
+    const resizer = new Resizer(this.container, cameraRig_.camera, renderer_);
     this.initialize_()
   }
 
@@ -103,7 +106,7 @@ class World {
     scene_.add(solarGroup_);
 
     // Initiate and position the Golem (choose default planetoid name)
-    //this.golem = new Golem(this.camera_);
+    //this.golem = new Golem(cameraRig_);
     //scene_.add(this.golem.mesh);
     //loop_.updatables.push(this.golem);
 
@@ -111,11 +114,9 @@ class World {
     // controls_.position.copy(initPlanetoid.position); // OrbitControls
     const initPlanetoidName = 'Earth'
     const initPlanetoid = solarGroup_.children.find(c => c.name.includes(initPlanetoidName))
+    cameraRig_.floor = initPlanetoid
+    loop_.updatables.push(cameraRig_.rig);
 
-    this.camera_.position.copy(initPlanetoid.position)
-      .add(new THREE.Vector3(0, 0, initPlanetoid.scale.z + 0.01));
-    this.camera_.lookAt(initPlanetoid.position.x, initPlanetoid.position.y, initPlanetoid.position.z)
-    this.camera_.updateProjectionMatrix();
 
     // Log init results
     {
@@ -142,31 +143,26 @@ class World {
           : null
         const newPos = getTargetPositionScale(tpMesh)
 
-        this.camera_.position.set(newPos.p[0], newPos.p[1], newPos.p[2] + newPos.s * 2.5)
-        this.camera_.lookAt(newPos.p[0], newPos.p[1], newPos.p[2])
-        this.camera_.updateProjectionMatrix()
+        cameraRig_.rig.position.set(newPos.p[0], newPos.p[1], newPos.p[2] + newPos.s * 2.5)
+        cameraRig_.rig.lookAt(newPos.p[0], newPos.p[1], newPos.p[2])
+        // cameraRig_.updateProjectionMatrix()
 
         decorateLog('TP >', tpMesh ? tpMesh.name : 'Free Float', newPos)
       });
   }
 
   tick(delta) {
-    // test golem request status
-    let isGolemRequested = true;
-
     this.stats.update(delta);
 
     controls_.tick(delta, loop_.updatables);
     //controls_.update(delta);
 
-    if (isGolemRequested) {
-      isGolemRequested = false;
-    }
+
   }
 
   render() {
     // draw a single frame
-    renderer_.render(scene_, this.camera_);
+    renderer_.render(scene_, cameraRig_.camera);
   }
 
   start() {

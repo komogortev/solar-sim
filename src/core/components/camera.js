@@ -1,4 +1,4 @@
-import { PerspectiveCamera } from 'three';
+import { Group, PerspectiveCamera } from 'three';
 import { AppSettings } from '../../globals';
 
 function createPerspectiveCamera(fov = 75, name = 'perspective camera') {
@@ -17,4 +17,45 @@ function createPerspectiveCamera(fov = 75, name = 'perspective camera') {
   return camera;
 }
 
-export { createPerspectiveCamera };
+class ConstructCameraRig {
+  constructor(fov = 75, name = 'perspective camera Rig') {
+    this.rig = new Group();
+
+    this._camera = createPerspectiveCamera(
+      fov, // fov = Field Of View
+      AppSettings.CAMERA.aspect,
+      AppSettings.CAMERA.near,
+      AppSettings.CAMERA.far,
+    );
+
+    this._name = name;
+
+    this._floor = null;
+
+    this.rig.add(this._camera);
+  }
+
+  tick (delta) {
+    //ensure rig is facing floor
+    this.rig.lookAt(initPlanetoid.position.x, initPlanetoid.position.y, initPlanetoid.position.z)
+
+    // ensure rig is on the floor
+    this.rig.position.copy(initPlanetoid.position)
+      .add(new THREE.Vector3(0, 0, initPlanetoid.scale.z + 0.01));
+  }
+
+  get name() {
+    return this._name;
+  }
+
+  get camera() {
+    return this._camera;
+  }
+
+  set floor(mesh) {
+    this._floor = mesh;
+    this._camera.floor = mesh;
+  }
+}
+
+export { createPerspectiveCamera, ConstructCameraRig };
