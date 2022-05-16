@@ -124,14 +124,14 @@ function decoratePlanetoid(geometry, data, parentScale = 0, camera) {
     });
     const athmosphereMesh = new Mesh(geometry, materialClouds);
     athmosphereMesh.name = 'Athmosphere Map';
-    //athmosphereMesh.scale.set(sphereMesh.scale.x + 0.1, sphereMesh.scale.y + 0.1, sphereMesh.scale.z + 0.1);
+    athmosphereMesh.scale.set(sphereMesh.scale.x + 0.5, sphereMesh.scale.y + 0.5, sphereMesh.scale.z + 0.5);
     athmosphereMesh.scale.multiplyScalar(
       sphereMesh.scale.x + data.athmosphereDepth
     );
     athmosphereMesh.position.set(0, 0, 0);
     athmosphereMesh.rotation.z = data.tilt;
     athmosphereMesh.tick = (delta) => {
-      // rotate planetoid in anticlockwise direction (+=)
+      // rotate athmosphereMesh in anticlockwise direction (+=)
       athmosphereMesh.rotation.y += delta * radiansPerSecond * settings.value.timeSpeed;
     };
     sphereMesh.add(athmosphereMesh);

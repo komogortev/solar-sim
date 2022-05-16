@@ -5,7 +5,7 @@ import GUI from 'lil-gui';
 
 import { loadBirds } from '../components/birds/birds';
 import { loadToonCat } from '../components/animals/toon-cat';
-import { ConstructCameraRig } from '../components/camera';
+import { createPerspectiveCamera, ConstructCameraRig } from '../components/camera';
 import { createAmbientLight, createPointLight } from '../components/lights';
 import { createSolarGroup } from './SolarGroup.js';
 import { Golem } from './Golem';
@@ -20,7 +20,7 @@ import { getTargetPositionScale, decorateLog } from '../../utils/helpers';
 
 const { solarSystemStore, settings, setTimeSpeed, getPlanetoidInfo } = useWorldStore();
 
-let cameraRig_, controls_, renderer_, scene_, loop_,
+let activeCamera, cameraRig_, sideCamera, controls_, renderer_, scene_, loop_,
   gltfLoader, raycaster, mouse,
   clickFlag, contextClickFlag, solarGroup_, tp_options, tp_control
 
@@ -43,25 +43,32 @@ class World {
 
     // World scene tools
     cameraRig_ = new ConstructCameraRig();
+    const cameraHelper = new THREE.CameraHelper(cameraRig_.camera);
+    cameraHelper.name = "Scene Camera Helper"
+
+    sideCamera = createPerspectiveCamera()
+    sideCamera.position.set(0,0,20)
+    sideCamera.lookAt(0,0,0)
+
+    activeCamera = sideCamera
 
     renderer_ = createRenderer();
-    container.append(renderer_.domElement);
-
     scene_ = createScene(renderer_, this.textureLoader);
 
-    loop_ = new Loop(cameraRig_.camera, scene_, renderer_);
+    container.append(renderer_.domElement);
+    loop_ = new Loop(activeCamera, scene_, renderer_);
 
-
-    controls_ = createPointerLockControls(cameraRig_.camera, renderer_.domElement);
-    loop_.updatables.push(this);
+    controls_ = createPointerLockControls(activeCamera, renderer_.domElement);
+    loop_.updatables.push(this, cameraRig_, activeCamera);
 
     const ambLight_ = createAmbientLight(0xffffff, .5);
     const pointLight_ = createPointLight(0xffffff, 100);
-    scene_.add(ambLight_, pointLight_, cameraRig_.rig);
+    scene_.add(ambLight_, pointLight_, activeCamera, cameraRig_.rig, sideCamera, cameraHelper);
 
     // Setup reactive listeners
-    const resizer = new Resizer(this.container, cameraRig_.camera, renderer_);
-    this.initialize_()
+    const resizer = new Resizer(this.container, activeCamera, renderer_);
+
+    this.initialize_();
   }
 
   // Scene objects setup
@@ -83,8 +90,6 @@ class World {
     // Create Solar System
     solarGroup_ = createSolarGroup();
 
-    this._initTpActionGui(solarGroup_)
-
     // Add system children to scene/loop_
     // *(account on just three categories of inheritance: star/planet/moon)
     solarGroup_.children.forEach(mesh => {
@@ -105,6 +110,8 @@ class World {
     // :3 star
     scene_.add(solarGroup_);
 
+    this._initTpActionGui(solarGroup_)
+
     // Initiate and position the Golem (choose default planetoid name)
     //this.golem = new Golem(cameraRig_);
     //scene_.add(this.golem.mesh);
@@ -114,9 +121,6 @@ class World {
     // controls_.position.copy(initPlanetoid.position); // OrbitControls
     const initPlanetoidName = 'Earth'
     const initPlanetoid = solarGroup_.children.find(c => c.name.includes(initPlanetoidName))
-    cameraRig_.floor = initPlanetoid
-    loop_.updatables.push(cameraRig_.rig);
-
 
     // Log init results
     {
@@ -128,6 +132,8 @@ class World {
         decorateLog('Updatable Objects:', '', loop_.updatables)
       console.groupEnd('Updatables');
     }
+
+    this.teleportCameraRig(initPlanetoid);
   }
 
   _initTpActionGui(group) {
@@ -141,14 +147,22 @@ class World {
         let tpMesh = v !== "Free Float"
           ? group.children.find(m => m.name === v)
           : null
-        const newPos = getTargetPositionScale(tpMesh)
 
-        cameraRig_.rig.position.set(newPos.p[0], newPos.p[1], newPos.p[2] + newPos.s * 2.5)
-        cameraRig_.rig.lookAt(newPos.p[0], newPos.p[1], newPos.p[2])
-        // cameraRig_.updateProjectionMatrix()
-
-        decorateLog('TP >', tpMesh ? tpMesh.name : 'Free Float', newPos)
+        this.teleportCameraRig(tpMesh)
       });
+  }
+
+  teleportCameraRig(destinationMesh) {
+    const newPos = getTargetPositionScale(destinationMesh)
+    activeCamera.floor = destinationMesh
+    activeCamera.position.set(newPos.p[0], newPos.p[1], newPos.p[2] + newPos.s * 2.5)
+    activeCamera.lookAt(newPos.p[0], newPos.p[1], newPos.p[2])
+
+    cameraRig_.floor = destinationMesh
+    cameraRig_.rig.position.set(newPos.p[0], newPos.p[1], newPos.p[2] + newPos.s * 1.5)
+    cameraRig_.rig.lookAt(newPos.p[0], newPos.p[1], newPos.p[2])
+    decorateLog('TP >', destinationMesh ? destinationMesh.name : 'Free Float', newPos)
+    console.log(activeCamera, cameraRig_)
   }
 
   tick(delta) {
@@ -157,12 +171,11 @@ class World {
     controls_.tick(delta, loop_.updatables);
     //controls_.update(delta);
 
-
   }
 
   render() {
     // draw a single frame
-    renderer_.render(scene_, cameraRig_.camera);
+    renderer_.render(scene_, activeCamera/*cameraRig_.camera*/);
   }
 
   start() {

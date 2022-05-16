@@ -1,5 +1,6 @@
-import { Group, PerspectiveCamera } from 'three';
+import { Group, PerspectiveCamera, Vector3 } from 'three';
 import { AppSettings } from '../../globals';
+import { Golem } from '../constructors/Golem';
 
 function createPerspectiveCamera(fov = 75, name = 'perspective camera') {
   const camera = new PerspectiveCamera(
@@ -12,13 +13,17 @@ function createPerspectiveCamera(fov = 75, name = 'perspective camera') {
   var cameraLayer = 1
   camera.layers.set(cameraLayer);
   // move the camera back so we can view the scene
-  camera.position.set(0, 0, 50);
-  camera.lookAt(0, 0, 0);
+  // camera.position.set(0, 0, 50);
+  // camera.lookAt(0, 0, 0);
   return camera;
 }
 
 class ConstructCameraRig {
   constructor(fov = 75, name = 'perspective camera Rig') {
+    this._name = name;
+
+    this._floor = null;
+
     this._rig = new Group();
 
     this._camera = createPerspectiveCamera(
@@ -28,21 +33,27 @@ class ConstructCameraRig {
       AppSettings.CAMERA.far,
     );
 
-    this._name = name;
+    this._camera.position.set(0, 0.5, 0.5);
 
-    this._floor = null;
+    this._camera.lookAt(-1, 0.5, 1);
 
-    this.rig.add(this._camera);
+    this.golem = new Golem(this._camera);
+
+    this.rig.add(this._camera, this.golem.mesh);
+
   }
 
-  tick (delta) {
+  tick(delta) {
 
     // rotate the rig to face the floor
-    this.rig.lookAt(initPlanetoid.position.x, initPlanetoid.position.y, initPlanetoid.position.z)
+    this.rig.lookAt(this._floor.position.x, this._floor.position.y, this._floor.position.z)
+
+    // find direction of attraction (to floor)
 
     // ensure rig is on the floor
-    //this.rig.position.copy(initPlanetoid.position)
-      //.add(new THREE.Vector3(0, 0, initPlanetoid.scale.z + 0.01));
+    this.rig.position.copy(this._floor.position)
+      .add(new Vector3(0, 0, this._floor.scale.z + 0.01));
+
   }
 
   get name() {

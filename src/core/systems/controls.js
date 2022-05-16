@@ -373,9 +373,7 @@ function createPointerLockControls(camera, canvas, options = AppSettings.FLY_CON
 
       controls.getObject().position.y += (velocity.y * delta); // new behavior
 
-
       const floor = camera.floor
-      // rotate controls to face the floor
 
       // get direction vector
       if (controls.getObject().position.y < floor.position.y) {
