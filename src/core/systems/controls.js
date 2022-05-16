@@ -334,13 +334,18 @@ function createPointerLockControls(camera, canvas, options = AppSettings.FLY_CON
 
       // Turn vertical against gravity parent
       //floor.rotation.set(0, -1, -1)
+      let conj = new Quaternion();
+      conj.copy(floor.quaternion)
+      conj.conjugate()
 
-      const quaternion = new Quaternion(floor.position.x, floor.position.y, floor.position.z, 1);
+      floor.quaternion.multiplyQuaternions(
+        conj,
+        floor.quaternion
+      )
+      // camera.applyQuaternion(quaternion); // Apply Quaternion
+      // camera.quaternion.normalize();  // Normalize Quaternion
+      // camera.lookAt(floor.position)
 
-      camera.applyQuaternion(quaternion); // Apply Quaternion
-
-      camera.quaternion.normalize();  // Normalize Quaternion
-      camera.lookAt(floor.position)
       // Attract controls body to gravity parent
 
 
