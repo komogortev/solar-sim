@@ -69,7 +69,7 @@ const state = reactive({
           emissiveMap: 'models/solar-system/textures/earth/earth_daymap_8k.jpg',
           emissiveIntensity: .125,
           displacementMap: 'models/solar-system/textures/earth/earth_bump_8k.jpg',
-          displacementScale: 0.05,
+          displacementScale: 0.15,
           bumpMap: 'models/solar-system/textures/earth/EarthNormal.png',
           bumpScale: 0.125,
           specularMap: 'models/solar-system/textures/earth/EarthSpec.png',

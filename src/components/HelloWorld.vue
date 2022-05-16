@@ -24,8 +24,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- <div id="info">{{ msg }}</div> -->
-  <!-- <div id="blocker">
+  <div id="info">{{ msg }}</div>
+
+  <div id="blocker">
     <div id="instructions">
       <p style="font-size:36px">
         Click to play
@@ -36,7 +37,8 @@ onMounted(() => {
         Look: MOUSE
       </p>
     </div>
-  </div> -->
+  </div>
+
   <section id="scene-container"></section>
 </template>
 

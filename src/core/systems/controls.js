@@ -2,7 +2,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { FlyControls } from 'three/examples/jsm/controls/FlyControls.js';
 import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls';
-import { Raycaster, Vector2, Vector3 } from 'three'
+import { Raycaster, Vector2, Vector3, Quaternion } from 'three'
 import { AppSettings } from '../../globals'
 
 let clickFlag = false
@@ -327,14 +327,21 @@ function createPointerLockControls(camera, canvas, options = AppSettings.FLY_CON
     // }
 
     if (controls.isLocked === true) {
-
+      const floor = camera.floor
 
       // Specify gravity parent (planetoid)
 
+
       // Turn vertical against gravity parent
+      //floor.rotation.set(0, -1, -1)
 
+      const quaternion = new Quaternion(floor.position.x, floor.position.y, floor.position.z, 1);
+
+      camera.applyQuaternion(quaternion); // Apply Quaternion
+
+      camera.quaternion.normalize();  // Normalize Quaternion
+      camera.lookAt(floor.position)
       // Attract controls body to gravity parent
-
 
 
       raycaster_.ray.origin.copy(controls.getObject().position);
@@ -352,7 +359,8 @@ function createPointerLockControls(camera, canvas, options = AppSettings.FLY_CON
       velocity.x -= velocity.x * 10.0 * delta;
       velocity.z -= velocity.z * 10.0 * delta;
 
-      velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
+      const mass = 10.0 // 100.0 = mass
+      velocity.y -= 9.8 * mass * delta;
 
       direction.z = Number(moveForward) - Number(moveBackward);
       direction.x = Number(moveRight) - Number(moveLeft);
@@ -373,7 +381,7 @@ function createPointerLockControls(camera, canvas, options = AppSettings.FLY_CON
 
       controls.getObject().position.y += (velocity.y * delta); // new behavior
 
-      const floor = camera.floor
+
 
       // get direction vector
       if (controls.getObject().position.y < floor.position.y) {

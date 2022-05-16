@@ -51,6 +51,7 @@ class World {
     sideCamera.lookAt(0,0,0)
 
     activeCamera = sideCamera
+    activeCamera.up.set(0, -1, 1)
 
     renderer_ = createRenderer();
     scene_ = createScene(renderer_, this.textureLoader);
@@ -161,6 +162,7 @@ class World {
     cameraRig_.floor = destinationMesh
     cameraRig_.rig.position.set(newPos.p[0], newPos.p[1], newPos.p[2] + newPos.s * 1.5)
     cameraRig_.rig.lookAt(newPos.p[0], newPos.p[1], newPos.p[2])
+
     decorateLog('TP >', destinationMesh ? destinationMesh.name : 'Free Float', newPos)
     console.log(activeCamera, cameraRig_)
   }

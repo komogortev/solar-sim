@@ -39,6 +39,12 @@ class Planetoid {
       this.planetoidMaterial.bumpScale = planetoidInfo.bumpScale
     }
 
+    if (planetoidInfo.displacementMap) {
+      this.planetoidMaterial.displacementMap = this.loader.load(planetoidInfo.displacementMap)
+      this.planetoidMaterial.displacementScale = planetoidInfo.displacementScale
+    }
+
+
     if (planetoidInfo.specularMap) {
       this.planetoidMaterial.specularMap = this.loader.load(planetoidInfo.specularMap)
       this.planetoidMaterial.shininess = planetoidInfo.shininess
