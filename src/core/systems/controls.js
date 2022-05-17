@@ -334,7 +334,7 @@ function createPointerLockControls(cameraRig, canvas, options = AppSettings.FLY_
       const Mmass = 1
       // Calculate direction of force
       var force = new Vector3().subVectors(cameraRig.camera.position, cameraRig.camera.floor.position);
-      //console.log(force)
+      console.log(force)
 
       // Get the length of this quaternion vector(?).
       var d = force.lengthSq();
@@ -353,7 +353,21 @@ function createPointerLockControls(cameraRig, canvas, options = AppSettings.FLY_
       if (!mass) mass = 1.0;
       var f = force.divideScalar(mass);
 
-      cameraRig.camera.position.add(f);
+      const newRigPosition = cameraRig.rig.position.add(f);
+      //@todo avoid altering floor position
+      const xx = floor.position.add(floor.scale).x
+      const xxx = floor.position.sub(floor.scale).x
+      const yy = floor.position.add(floor.scale).y
+      const yyy = floor.position.sub(floor.scale).y
+      const zz = floor.position.add(floor.scale).z
+      const zzz = floor.position.sub(floor.scale).z
+      if (
+        (newRigPosition.x > xx || newRigPosition.x < xxx) &&
+        (newRigPosition.y > yy || newRigPosition.y < yyy) &&
+        (newRigPosition.z > zz || newRigPosition.z < zzz)
+      ) {
+        cameraRig.rig.position.set(newRigPosition)
+      }
 
 
 
@@ -372,11 +386,6 @@ function createPointerLockControls(cameraRig, canvas, options = AppSettings.FLY_
 
       // camera.position.addVectors(camera.floor.position, force);
       // camera.lookAt(camera.floor.position);
-
-
-
-
-
 
 
 
