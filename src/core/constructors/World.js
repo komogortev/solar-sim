@@ -50,8 +50,7 @@ class World {
     sideCamera.position.set(0,0,20)
     sideCamera.lookAt(0,0,0)
 
-    activeCamera = sideCamera
-    activeCamera.up.set(0, -1, 1)
+    activeCamera = cameraRig_.camera
 
     renderer_ = createRenderer();
     scene_ = createScene(renderer_, this.textureLoader);

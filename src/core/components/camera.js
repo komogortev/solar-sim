@@ -45,7 +45,7 @@ class ConstructCameraRig {
 
     this.golem = new Golem(this._camera);
 
-    this.rig.add(this._camera, this.golem.mesh);
+    this._rig.add(this._camera, this.golem.mesh);
 
   }
 

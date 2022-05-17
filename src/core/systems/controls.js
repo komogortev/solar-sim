@@ -239,7 +239,7 @@ function createPointerLockControls(camera, canvas, options = AppSettings.FLY_CON
         break;
 
       case 'Space':
-        if (canJump === true) velocity.y += 350;
+        if (canJump === true) velocity.y += 5;
         canJump = false;
         break;
 
@@ -300,31 +300,33 @@ function createPointerLockControls(camera, canvas, options = AppSettings.FLY_CON
   // Forward controls.update to our custom .tick method
   controls.tick = (delta, updatables) => {
 
-    // Act on left click
-    // if (dblClickFlag) {
-    //   dblClickFlag = false
-    //   // find btn mesh connection and switch to its camera
-    //   raycaster_.setFromCamera(mouse, camera);
-    //   // ! avoid intersectObjects undefined object.layer error for OrbitControls in updatables
-    //   const eligibleMeshes = updatables.filter(u => u.type === 'Mesh')
-    //   const intersection = raycaster_.intersectObjects(eligibleMeshes);
+    {
+        // Act on left click
+        // if (dblClickFlag) {
+        //   dblClickFlag = false
+        //   // find btn mesh connection and switch to its camera
+        //   raycaster_.setFromCamera(mouse, camera);
+        //   // ! avoid intersectObjects undefined object.layer error for OrbitControls in updatables
+        //   const eligibleMeshes = updatables.filter(u => u.type === 'Mesh')
+        //   const intersection = raycaster_.intersectObjects(eligibleMeshes);
 
-    //   for (var i = 0; i < intersection.length; i++) {
-    //     if (intersection[i].object && intersection[i].object.name
-    //       && intersection[i].object.name.includes(' MeshGroup')) {
-    //       const meshSurface = intersection[i].object.scale.x
-    //       const cameraOrbitOffset = 2
-    //       camera.position.copy(intersection[i].object.position)
-    //         .add(new Vector3(0, 0, meshSurface * cameraOrbitOffset));
-    //       camera.lookAt(intersection[i].object.position);
-    //       camera.updateProjectionMatrix();
-    //       break
-    //     }
-    //   }
-    // } else if (contextClickFlag) {
-    //   contextClickFlag = false
-    //   // return to default camera on right click
-    // }
+        //   for (var i = 0; i < intersection.length; i++) {
+        //     if (intersection[i].object && intersection[i].object.name
+        //       && intersection[i].object.name.includes(' MeshGroup')) {
+        //       const meshSurface = intersection[i].object.scale.x
+        //       const cameraOrbitOffset = 2
+        //       camera.position.copy(intersection[i].object.position)
+        //         .add(new Vector3(0, 0, meshSurface * cameraOrbitOffset));
+        //       camera.lookAt(intersection[i].object.position);
+        //       camera.updateProjectionMatrix();
+        //       break
+        //     }
+        //   }
+        // } else if (contextClickFlag) {
+        //   contextClickFlag = false
+        //   // return to default camera on right click
+        // }
+    }
 
     if (controls.isLocked === true) {
       const floor = camera.floor
@@ -334,14 +336,7 @@ function createPointerLockControls(camera, canvas, options = AppSettings.FLY_CON
 
       // Turn vertical against gravity parent
       //floor.rotation.set(0, -1, -1)
-      let conj = new Quaternion();
-      conj.copy(floor.quaternion)
-      conj.conjugate()
 
-      floor.quaternion.multiplyQuaternions(
-        conj,
-        floor.quaternion
-      )
       // camera.applyQuaternion(quaternion); // Apply Quaternion
       // camera.quaternion.normalize();  // Normalize Quaternion
       // camera.lookAt(floor.position)
