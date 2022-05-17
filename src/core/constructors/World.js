@@ -55,10 +55,14 @@ class World {
     renderer_ = createRenderer();
     scene_ = createScene(renderer_, this.textureLoader);
 
+    this.golem = new Golem();
+    this.golem.mesh.position.set(150, 2, 0)
+scene_.add(this.golem.mesh)
+
     container.append(renderer_.domElement);
     loop_ = new Loop(activeCamera, scene_, renderer_);
 
-    controls_ = createPointerLockControls(activeCamera, renderer_.domElement);
+    controls_ = createPointerLockControls(cameraRig_, renderer_.domElement);
     loop_.updatables.push(this, cameraRig_, activeCamera);
 
     const ambLight_ = createAmbientLight(0xffffff, .5);

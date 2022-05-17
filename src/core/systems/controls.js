@@ -195,12 +195,12 @@ function createFpsControls(camera, canvas, options = AppSettings.FPS_CONTROLS) {
   return controls;
 }
 
-function createPointerLockControls(camera, canvas, options = AppSettings.FLY_CONTROLS) {
+function createPointerLockControls(cameraRig, canvas, options = AppSettings.FLY_CONTROLS) {
   const blocker = document.getElementById('blocker');
   const instructions = document.getElementById('instructions');
   const raycaster_ = new Raycaster(new Vector3(), new Vector3(0, - 1, 0), 0, 10);
 
-  const controls = new PointerLockControls(camera, canvas);
+  const controls = new PointerLockControls(cameraRig.camera, canvas);
   controls.isLocked === true
 
   let moveForward = false;
@@ -329,9 +329,56 @@ function createPointerLockControls(camera, canvas, options = AppSettings.FLY_CON
     }
 
     if (controls.isLocked === true) {
-      const floor = camera.floor
+      const floor = cameraRig.camera.floor
+      const mass = 10
+      const Mmass = 1
+      // Calculate direction of force
+      var force = new Vector3().subVectors(cameraRig.camera.position, cameraRig.camera.floor.position);
+      //console.log(force)
 
-      // Specify gravity parent (planetoid)
+      // Get the length of this quaternion vector(?).
+      var d = force.lengthSq();
+
+      if (d < 0) d *= -1;
+
+      force = force.normalize();
+
+      // Calculate gravitional force magnitude
+      var strength = - (9.98 * mass * delta) / (d);
+
+      // Get force vector --> magnitude * direction
+      force = force.multiplyScalar(strength);
+
+
+      if (!mass) mass = 1.0;
+      var f = force.divideScalar(mass);
+
+      cameraRig.camera.position.add(f);
+
+
+
+
+      // let quaternion = camera.quaternion;
+
+      // if (quaternion) {
+      //   force
+      //     .copy(camera.position).sub(camera.floor.position)
+      //     .applyQuaternion(quaternion)
+
+      // } else {
+      //   force
+      //     .copy(camera.position).sub(camera.floor.position)
+      // }
+
+      // camera.position.addVectors(camera.floor.position, force);
+      // camera.lookAt(camera.floor.position);
+
+
+
+
+
+
+
 
 
       // Turn vertical against gravity parent
@@ -359,8 +406,7 @@ function createPointerLockControls(camera, canvas, options = AppSettings.FLY_CON
       velocity.x -= velocity.x * 10.0 * delta;
       velocity.z -= velocity.z * 10.0 * delta;
 
-      const mass = 10.0 // 100.0 = mass
-      velocity.y -= 9.8 * mass * delta;
+      //velocity.y -= 9.8 * mass * delta;
 
       direction.z = Number(moveForward) - Number(moveBackward);
       direction.x = Number(moveRight) - Number(moveLeft);
